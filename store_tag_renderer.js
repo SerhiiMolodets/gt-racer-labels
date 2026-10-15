@@ -57,42 +57,52 @@ function generateStoreTagSvgString(item, qrDataUrl) {
   const load = item.max_load || "120 кг";
   const war = item.warranty || "12 місяців";
 
-  // Dynamic positioning and styling to guarantee "грн" never overlaps price
-  // 5-digit price (e.g. 14 599) vs 4-digit price (e.g. 7 799) vs 3-digit price (e.g. 899)
-  let newPriceStartX = 24;
-  let newPriceStyle = '';
-  let unitStyle = '';
+  // Dynamic typography and positioning to guarantee "грн" NEVER overflows card border
+  // Tag width is 309, right border rect is at 307. Right margin x = 288 gives clean 19px padding.
+  let newPriceFontSize = 64;
+  let newUnitFontSize = 33;
 
-  if (pNewVal > 9999) {
-    newPriceStartX = 18;
-    newPriceStyle = ' style="font-size: 60px;"';
-    unitStyle = ' style="font-size: 35px;"';
+  if (pNewVal > 99999) {
+    newPriceFontSize = 46;
+    newUnitFontSize = 24;
+  } else if (pNewVal > 9999) {
+    newPriceFontSize = 54;
+    newUnitFontSize = 28;
   } else if (pNewVal > 999) {
-    newPriceStartX = 24;
-    newPriceStyle = '';
-    unitStyle = '';
+    newPriceFontSize = 64;
+    newUnitFontSize = 33;
   } else if (pNewVal > 0) {
-    newPriceStartX = 42;
-    newPriceStyle = '';
-    unitStyle = '';
+    newPriceFontSize = 72;
+    newUnitFontSize = 38;
   } else {
-    newPriceStartX = 18;
-    newPriceStyle = ' style="font-size: 36px;"';
-    unitStyle = '';
+    newPriceFontSize = 24;
+    newUnitFontSize = 0;
   }
 
-  let oldPriceStartX = 140;
-  let oldPriceStyle = 'text-decoration: line-through;';
+  let oldPriceFontSize = 32;
+  let oldUnitFontSize = 20;
   if (pOldVal > 9999) {
-    oldPriceStartX = 125;
-    oldPriceStyle = 'font-size: 34px; text-decoration: line-through;';
-  } else if (pOldVal > 999) {
-    oldPriceStartX = 140;
-    oldPriceStyle = 'text-decoration: line-through;';
-  } else {
-    oldPriceStartX = 155;
-    oldPriceStyle = 'text-decoration: line-through;';
+    oldPriceFontSize = 28;
+    oldUnitFontSize = 18;
   }
+
+  // Old price: text-anchor="end" locked to right margin x = 288
+  const oldPriceXml = hasOldPrice ? `
+  <text x="288" y="288.2741" text-anchor="end" xml:space="preserve">
+    <tspan class="st2" style="font-size: ${oldPriceFontSize}px; text-decoration: line-through;">${pOldStr}</tspan><tspan class="st2" style="font-size: ${oldUnitFontSize}px;" dx="5"> грн</tspan>
+  </text>
+  ` : '';
+
+  // New price: text-anchor="end" locked to right margin x = 288, or centered if no price
+  const newPriceXml = pNewVal > 0 ? `
+  <text x="288" y="350.8818" text-anchor="end" xml:space="preserve">
+    <tspan class="st2" style="font-size: ${newPriceFontSize}px; letter-spacing: -0.5px;">${pNewStr}</tspan><tspan class="st2" style="font-size: ${newUnitFontSize}px;" dx="6"> грн</tspan>
+  </text>
+  ` : `
+  <text x="154.5" y="340" text-anchor="middle" class="st2" style="font-size: 24px; fill: #4b5563;">
+    ${escapeXml(pNewStr)}
+  </text>
+  `;
 
   const monoImg = (typeof window !== 'undefined' && window.IMG_MONOBANK) ? window.IMG_MONOBANK : "";
   const privatImg = (typeof window !== 'undefined' && window.IMG_PRIVAT) ? window.IMG_PRIVAT : "";
@@ -150,16 +160,10 @@ function generateStoreTagSvgString(item, qrDataUrl) {
   </text>
 
   <!-- Old Price (Strikethrough) -->
-  ${hasOldPrice ? `
-  <text transform="matrix(1 0 0 1 ${oldPriceStartX} 288.2741)" xml:space="preserve">
-    <tspan class="st2 st4" style="${oldPriceStyle}">${pOldStr}</tspan><tspan class="st2 st5" dx="6">грн</tspan>
-  </text>
-  ` : ''}
+  ${oldPriceXml}
 
   <!-- New Price (Main Large Price) -->
-  <text transform="matrix(1 0 0 1 ${newPriceStartX} 350.8818)" xml:space="preserve">
-    <tspan class="st2 st6"${newPriceStyle}>${pNewStr}</tspan>${pNewVal > 0 ? `<tspan class="st2 st7"${unitStyle} dx="8">грн</tspan>` : ''}
-  </text>
+  ${newPriceXml}
 
   <!-- Monobank installment badge -->
   <g>
