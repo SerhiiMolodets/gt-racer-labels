@@ -318,17 +318,21 @@
             
             <!-- Tabs Header -->
             <div class="border-b border-gray-200 bg-gray-50 flex text-xs font-semibold">
-              <button onclick="switchTab('text')" id="tabBtnText" class="flex-1 py-3 px-3 text-center border-b-2 border-red-600 text-red-600 font-bold bg-white flex items-center justify-center gap-1.5">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                Вставити з Excel
+              <button onclick="switchTab('text')" id="tabBtnText" class="flex-1 py-3 px-2 text-center border-b-2 border-red-600 text-red-600 font-bold bg-white flex items-center justify-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <span class="truncate">Текст з Excel</span>
               </button>
-              <button onclick="switchTab('file')" id="tabBtnFile" class="flex-1 py-3 px-3 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 flex items-center justify-center gap-1.5">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                Файл (.xlsx)
+              <button onclick="switchTab('file')" id="tabBtnFile" class="flex-1 py-3 px-2 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 flex items-center justify-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                <span class="truncate">Файл Excel</span>
               </button>
-              <button onclick="switchTab('search')" id="tabBtnSearch" class="flex-1 py-3 px-3 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 flex items-center justify-center gap-1.5">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                Пошук товару
+              <button onclick="switchTab('search')" id="tabBtnSearch" class="flex-1 py-3 px-2 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 flex items-center justify-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <span class="truncate">Пошук</span>
+              </button>
+              <button onclick="switchTab('manual')" id="tabBtnManual" class="flex-1 py-3 px-2 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 flex items-center justify-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                <span class="truncate">Вручну</span>
               </button>
             </div>
 
@@ -364,10 +368,25 @@ GT Racer X-5993 Black	2
 
               <!-- Tab 2: File Upload -->
               <div id="tabContentFile" class="space-y-4 hidden">
+                <!-- Download Excel Template Card -->
+                <div class="border border-green-200 bg-green-50/60 rounded-xl p-3 flex items-center justify-between gap-3 text-xs">
+                  <div>
+                    <div class="font-bold text-gray-900 flex items-center gap-1.5">
+                      <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                      Шаблон Excel для цінників
+                    </div>
+                    <div class="text-gray-600 text-[11px] mt-0.5">Файл з усіма характеристиками (Матеріал, Підлокітники, Навантаження, Гарантія, Ціни, ШК)</div>
+                  </div>
+                  <button onclick="downloadExcelTemplate()" class="px-3 py-1.5 bg-white hover:bg-green-100 text-green-800 border border-green-300 font-bold rounded-lg shadow-sm transition flex items-center gap-1.5 whitespace-nowrap text-xs">
+                    <svg class="w-3.5 h-3.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Завантажити шаблон
+                  </button>
+                </div>
+
                 <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-red-500 transition cursor-pointer" onclick="document.getElementById('fileUploadInput').click()">
                   <svg class="w-10 h-10 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
                   <p class="text-sm font-semibold text-gray-700">Перетягніть Excel файл або натисніть</p>
-                  <p class="text-xs text-gray-500 mt-1">Підтримуються формати .xlsx, .xls, .csv</p>
+                  <p class="text-xs text-gray-500 mt-1">Підтримуються формати .xlsx, .xls, .csv (накладні та списки з характеристиками)</p>
                   <input type="file" id="fileUploadInput" accept=".xlsx,.xls,.csv" class="hidden" onchange="handleFileUpload(event)">
                 </div>
                 <div id="fileUploadStatus" class="text-xs text-gray-600 font-medium"></div>
@@ -394,6 +413,109 @@ GT Racer X-5993 Black	2
                   Додати товар до списку
                 </button>
               </div>
+
+              <!-- Tab 4: Manual Item Entry -->
+              <div id="tabContentManual" class="space-y-3.5 hidden">
+                <div>
+                  <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+                    Назва товару / моделі:
+                  </label>
+                  <input type="text" id="manualName" placeholder="напр. GT Racer X-2534-F Fabric Black" class="w-full text-xs p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 font-semibold">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <label class="block font-semibold text-gray-700 mb-0.5">Ціна нова (грн):</label>
+                    <input type="number" id="manualPrice" placeholder="6599" oninput="autoCalculateManualOldPrice()" class="w-full p-2 border border-gray-300 rounded-lg font-bold text-red-600">
+                  </div>
+                  <div>
+                    <label class="block font-semibold text-gray-700 mb-0.5">Ціна стара (грн):</label>
+                    <input type="number" id="manualOldPrice" placeholder="7799" class="w-full p-2 border border-gray-300 rounded-lg text-gray-500 line-through">
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <label class="block font-semibold text-gray-700 mb-0.5">Штрихкод (EAN-13):</label>
+                    <input type="text" id="manualBarcode" placeholder="4820241177523" maxlength="13" class="w-full p-2 border border-gray-300 rounded-lg font-mono">
+                  </div>
+                  <div>
+                    <label class="block font-semibold text-gray-700 mb-0.5">Кількість (шт):</label>
+                    <input type="number" id="manualQty" value="1" min="1" class="w-full p-2 border border-gray-300 rounded-lg text-center font-bold">
+                  </div>
+                </div>
+
+                <!-- Characteristics (Store Price Tag) -->
+                <div class="p-3 bg-gray-50 rounded-xl border border-gray-200 space-y-2.5">
+                  <div class="text-[11px] font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1">
+                    <span>📋 Характеристики для цінника:</span>
+                  </div>
+                  
+                  <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <label class="block text-gray-600 mb-0.5">Матеріал оббивки:</label>
+                      <input type="text" id="manualMaterial" value="Зносостійка тканина" list="listMaterials" class="w-full p-1.5 border border-gray-300 rounded text-xs">
+                    </div>
+                    <div>
+                      <label class="block text-gray-600 mb-0.5">Підлокітники:</label>
+                      <input type="text" id="manualArmrests" value="1D" list="listArmrests" class="w-full p-1.5 border border-gray-300 rounded text-xs">
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <label class="block text-gray-600 mb-0.5">Макс. навантаження:</label>
+                      <input type="text" id="manualMaxLoad" value="120 кг" list="listMaxLoad" class="w-full p-1.5 border border-gray-300 rounded text-xs">
+                    </div>
+                    <div>
+                      <label class="block text-gray-600 mb-0.5">Гарантія:</label>
+                      <input type="text" id="manualWarranty" value="12 місяців" list="listWarranty" class="w-full p-1.5 border border-gray-300 rounded text-xs">
+                    </div>
+                  </div>
+
+                  <div class="text-xs">
+                    <label class="block text-gray-600 mb-0.5">Посилання (URL для QR-коду):</label>
+                    <input type="text" id="manualUrl" placeholder="https://gtracer.com.ua/..." class="w-full p-1.5 border border-gray-300 rounded text-xs font-mono">
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2 pt-1 text-xs text-gray-700">
+                  <input type="checkbox" id="chkManualSaveToDb" checked class="rounded text-red-600 focus:ring-red-500">
+                  <label for="chkManualSaveToDb" class="cursor-pointer font-medium">Запам'ятати в локальній базі товарів</label>
+                </div>
+
+                <button onclick="addManualItem()" class="w-full py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow transition flex items-center justify-center gap-2 text-sm mt-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                  Додати цінник до черги
+                </button>
+              </div>
+
+              <!-- Shared datalists for auto-completion -->
+              <datalist id="listMaterials">
+                <option value="Зносостійка тканина">
+                <option value="Екошкіра PU">
+                <option value="Дихаюча сітка">
+                <option value="Перфорована екошкіра">
+                <option value="Натуральна шкіра">
+              </datalist>
+              <datalist id="listArmrests">
+                <option value="1D">
+                <option value="2D">
+                <option value="3D">
+                <option value="4D">
+                <option value="Нерегульовані">
+              </datalist>
+              <datalist id="listMaxLoad">
+                <option value="100 кг">
+                <option value="120 кг">
+                <option value="130 кг">
+                <option value="140 кг">
+                <option value="150 кг">
+              </datalist>
+              <datalist id="listWarranty">
+                <option value="12 місяців">
+                <option value="24 місяці">
+              </datalist>
 
             </div>
           </div>
@@ -514,6 +636,22 @@ GT Racer X-5993 Black	2
             </div>
           </div>
 
+          <!-- Unmatched Items Alert Banner -->
+          <div id="unmatchedBanner" class="hidden p-4 bg-amber-50 border border-amber-300 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs shadow-sm">
+            <div class="flex items-center gap-2.5">
+              <span class="text-2xl">⚠️</span>
+              <div>
+                <div class="font-bold text-amber-900" id="unmatchedBannerTitle">0 товарів не знайдено в базі</div>
+                <div class="text-amber-700 text-[11px]">Для коректного друку цінників GT Racer потрібно заповнити характеристики</div>
+              </div>
+            </div>
+            <button onclick="openNextUnmatchedModal()" class="py-2 px-3.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg shadow transition flex items-center gap-1.5 whitespace-nowrap text-xs">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+              <span>Заповнити характеристики</span>
+              <span id="unmatchedBannerBadge" class="bg-amber-800 text-white px-1.5 py-0.5 rounded-full text-[10px]">0</span>
+            </button>
+          </div>
+
           <!-- Items Table -->
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="px-5 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
@@ -537,7 +675,7 @@ GT Racer X-5993 Black	2
                     <th class="px-2 py-2 text-center w-28">Ціна (Нова / Стара)</th>
                     <th class="px-2 py-2 text-left w-24">Характеристики</th>
                     <th class="px-2 py-2 text-center w-16">К-сть</th>
-                    <th class="px-2 py-2 text-center w-8">Дія</th>
+                    <th class="px-2 py-2 text-center w-12">Дія</th>
                   </tr>
                 </thead>
                 <tbody id="itemsTableBody" class="divide-y divide-gray-200 bg-white">
@@ -552,6 +690,141 @@ GT Racer X-5993 Black	2
         </div>
       </div>
     </main>
+  </div>
+
+  <!-- Modal Dialog: Edit / Fill Item Characteristics -->
+  <div id="modalEditItem" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl border border-gray-200 max-w-lg w-full overflow-hidden animate-in fade-in zoom-in duration-150">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 bg-gray-900 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center font-black text-white text-xs">GT</div>
+          <div>
+            <h3 class="font-bold text-sm" id="modalItemTitle">Характеристики товару для цінника</h3>
+            <p class="text-[11px] text-gray-400" id="modalItemSubtitle">Заповніть параметри або перевірте дані</p>
+          </div>
+        </div>
+        <button onclick="closeEditItemModal()" class="text-gray-400 hover:text-white transition p-1 text-2xl leading-none">&times;</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
+        <input type="hidden" id="editItemId">
+
+        <!-- Product Name -->
+        <div>
+          <label class="block font-bold text-gray-700 uppercase tracking-wider mb-1">Назва товару:</label>
+          <input type="text" id="editItemName" class="w-full p-2.5 border border-gray-300 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-red-500">
+        </div>
+
+        <!-- Prices & Qty -->
+        <div class="grid grid-cols-3 gap-2.5">
+          <div>
+            <label class="block font-semibold text-gray-700 mb-1">Ціна нова (грн):</label>
+            <input type="number" id="editItemPrice" oninput="autoCalculateModalOldPrice()" class="w-full p-2 border border-gray-300 rounded-lg font-bold text-red-600">
+          </div>
+          <div>
+            <label class="block font-semibold text-gray-700 mb-1">Стара ціна (грн):</label>
+            <input type="number" id="editItemOldPrice" class="w-full p-2 border border-gray-300 rounded-lg text-gray-500 line-through">
+          </div>
+          <div>
+            <label class="block font-semibold text-gray-700 mb-1">К-сть (шт):</label>
+            <input type="number" id="editItemQty" min="1" class="w-full p-2 border border-gray-300 rounded-lg text-center font-bold">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-gray-700 mb-1 flex items-center justify-between">
+            <span>Штрихкод (EAN-13):</span>
+            <button type="button" onclick="generateTemporaryBarcode()" class="text-[11px] text-blue-600 hover:underline">Згенерувати тимчасовий</button>
+          </label>
+          <input type="text" id="editItemBarcode" maxlength="13" class="w-full p-2 border border-gray-300 rounded-lg font-mono">
+        </div>
+
+        <!-- Characteristics Box -->
+        <div class="p-3.5 bg-gray-50 rounded-xl border border-gray-200 space-y-3">
+          <div class="font-bold text-gray-800 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+            Характеристики для оригінального цінника (1:1)
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-gray-600 mb-1">Матеріал оббивки:</label>
+              <input type="text" id="editItemMaterial" list="listMaterials" class="w-full p-1.5 border border-gray-300 rounded text-xs">
+              <div class="flex flex-wrap gap-1 mt-1">
+                <button type="button" onclick="setModalField('editItemMaterial', 'Зносостійка тканина')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">Тканина</button>
+                <button type="button" onclick="setModalField('editItemMaterial', 'Екошкіра PU')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">Екошкіра</button>
+                <button type="button" onclick="setModalField('editItemMaterial', 'Дихаюча сітка')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">Сітка</button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-gray-600 mb-1">Підлокітники:</label>
+              <input type="text" id="editItemArmrests" list="listArmrests" class="w-full p-1.5 border border-gray-300 rounded text-xs">
+              <div class="flex flex-wrap gap-1 mt-1">
+                <button type="button" onclick="setModalField('editItemArmrests', '1D')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">1D</button>
+                <button type="button" onclick="setModalField('editItemArmrests', '2D')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">2D</button>
+                <button type="button" onclick="setModalField('editItemArmrests', '3D')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">3D</button>
+                <button type="button" onclick="setModalField('editItemArmrests', '4D')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">4D</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-gray-600 mb-1">Макс. навантаження:</label>
+              <input type="text" id="editItemMaxLoad" list="listMaxLoad" class="w-full p-1.5 border border-gray-300 rounded text-xs">
+              <div class="flex flex-wrap gap-1 mt-1">
+                <button type="button" onclick="setModalField('editItemMaxLoad', '100 кг')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">100 кг</button>
+                <button type="button" onclick="setModalField('editItemMaxLoad', '120 кг')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">120 кг</button>
+                <button type="button" onclick="setModalField('editItemMaxLoad', '150 кг')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">150 кг</button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-gray-600 mb-1">Гарантія:</label>
+              <input type="text" id="editItemWarranty" list="listWarranty" class="w-full p-1.5 border border-gray-300 rounded text-xs">
+              <div class="flex flex-wrap gap-1 mt-1">
+                <button type="button" onclick="setModalField('editItemWarranty', '12 місяців')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">12 міс</button>
+                <button type="button" onclick="setModalField('editItemWarranty', '24 місяці')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">24 міс</button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-gray-600 mb-1 flex items-center justify-between">
+              <span>Посилання на сайт (для QR-коду):</span>
+              <button type="button" onclick="autoGenerateModalUrl()" class="text-[11px] text-blue-600 hover:underline">Згенерувати пошукове</button>
+            </label>
+            <input type="text" id="editItemUrl" class="w-full p-1.5 border border-gray-300 rounded text-xs font-mono">
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 pt-1 text-xs text-gray-700">
+          <input type="checkbox" id="chkModalSaveToDb" checked class="rounded text-red-600 focus:ring-red-500">
+          <label for="chkModalSaveToDb" class="cursor-pointer font-medium">Запам'ятати характеристики в базі GT Racer</label>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between gap-3">
+        <button onclick="closeEditItemModal()" class="px-4 py-2 border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 rounded-lg font-medium transition text-xs">
+          Закрити
+        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="saveModalEditItem(false)" class="px-4 py-2 bg-gray-800 hover:bg-black text-white font-semibold rounded-lg shadow transition text-xs">
+            Зберегти
+          </button>
+          <button id="btnModalSaveAndNext" onclick="saveModalEditItem(true)" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg shadow transition text-xs flex items-center gap-1.5">
+            <span>Зберегти і наступний</span>
+            <span>&rarr;</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <!-- Hidden Print Containers -->
@@ -572,12 +845,14 @@ GT Racer X-5993 Black	2
     window.addEventListener('DOMContentLoaded', () => {
       if (window.PRELOADED_PRODUCTS && window.PRELOADED_PRODUCTS.length > 0) {
         catalog = window.PRELOADED_PRODUCTS;
+        loadCustomProductsFromStorage();
         updateDbBadge(catalog.length);
       } else {
         fetch('products.json')
           .then(res => res.json())
           .then(data => {
             catalog = data;
+            loadCustomProductsFromStorage();
             updateDbBadge(catalog.length);
           })
           .catch(err => console.warn('Fallback catalog', err));
@@ -696,16 +971,246 @@ GT Racer X-5993 Black	2
 
     // Input Tabs
     function switchTab(tab) {
-      ['text', 'file', 'search'].forEach(t => {
-        document.getElementById('tabContent' + capitalize(t)).classList.add('hidden');
-        document.getElementById('tabBtn' + capitalize(t)).className = 'flex-1 py-3 px-3 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 flex items-center justify-center gap-1.5';
+      ['text', 'file', 'search', 'manual'].forEach(t => {
+        const content = document.getElementById('tabContent' + capitalize(t));
+        const btn = document.getElementById('tabBtn' + capitalize(t));
+        if (content) content.classList.add('hidden');
+        if (btn) btn.className = 'flex-1 py-3 px-2 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 flex items-center justify-center gap-1';
       });
-      document.getElementById('tabContent' + capitalize(tab)).classList.remove('hidden');
-      document.getElementById('tabBtn' + capitalize(tab)).className = 'flex-1 py-3 px-3 text-center border-b-2 border-red-600 text-red-600 font-bold bg-white flex items-center justify-center gap-1.5';
+      const activeContent = document.getElementById('tabContent' + capitalize(tab));
+      const activeBtn = document.getElementById('tabBtn' + capitalize(tab));
+      if (activeContent) activeContent.classList.remove('hidden');
+      if (activeBtn) activeBtn.className = 'flex-1 py-3 px-2 text-center border-b-2 border-red-600 text-red-600 font-bold bg-white flex items-center justify-center gap-1';
     }
 
     function capitalize(s) {
       return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    // Local Storage: Custom user-edited products
+    function loadCustomProductsFromStorage() {
+      try {
+        const raw = localStorage.getItem('GT_CUSTOM_PRODUCTS');
+        if (raw) {
+          const list = JSON.parse(raw);
+          if (Array.isArray(list) && list.length > 0) {
+            list.forEach(cp => {
+              let idx = catalog.findIndex(c => c.name.toLowerCase() === cp.name.toLowerCase() || (cp.barcode && c.barcode === cp.barcode));
+              if (idx >= 0) {
+                catalog[idx] = { ...catalog[idx], ...cp };
+              } else {
+                catalog.unshift(cp);
+              }
+            });
+            updateDbBadge(catalog.length);
+          }
+        }
+      } catch (e) {
+        console.warn('Error loading custom products', e);
+      }
+    }
+
+    function saveCustomProductToStorage(prod) {
+      if (!prod || !prod.name) return;
+      try {
+        let raw = localStorage.getItem('GT_CUSTOM_PRODUCTS');
+        let list = raw ? JSON.parse(raw) : [];
+        if (!Array.isArray(list)) list = [];
+
+        let entry = {
+          name: prod.name,
+          barcode: prod.barcode || '',
+          price_rt: prod.price_rt || 0,
+          price_old: prod.price_old || 0,
+          material: prod.material || 'Зносостійка тканина',
+          armrests: prod.armrests || '1D',
+          max_load: prod.max_load || '120 кг',
+          warranty: prod.warranty || '12 місяців',
+          url: prod.url || `https://gtracer.com.ua/index.php?route=product/search&search=${encodeURIComponent(prod.name)}`
+        };
+
+        let existingIdx = list.findIndex(p => p.name.toLowerCase() === entry.name.toLowerCase() || (entry.barcode && p.barcode === entry.barcode));
+        if (existingIdx >= 0) {
+          list[existingIdx] = entry;
+        } else {
+          list.push(entry);
+        }
+        localStorage.setItem('GT_CUSTOM_PRODUCTS', JSON.stringify(list));
+
+        // Update in-memory catalog
+        let catIdx = catalog.findIndex(c => c.name.toLowerCase() === entry.name.toLowerCase() || (entry.barcode && c.barcode === entry.barcode));
+        if (catIdx >= 0) {
+          catalog[catIdx] = { ...catalog[catIdx], ...entry };
+        } else {
+          catalog.unshift(entry);
+          updateDbBadge(catalog.length);
+        }
+      } catch (e) {
+        console.warn('Error saving custom product', e);
+      }
+    }
+
+    // Download Official Excel Template
+    function downloadExcelTemplate() {
+      const templateData = [
+        {
+          'Назва товару': 'GT Racer X-2534-F Fabric Black',
+          'Штрихкод': '4820241177523',
+          'Ціна нова': 6599,
+          'Ціна стара': 7799,
+          'Матеріал оббивки': 'Зносостійка тканина',
+          'Підлокітники': '1D',
+          'Максимальне навантаження': '150 кг',
+          'Гарантія': '12 місяців',
+          'Посилання (URL)': 'https://gtracer.com.ua/kresla/x-2534-f-fabric-black.html',
+          'Кількість': 2
+        },
+        {
+          'Назва товару': 'GT Racer X-2748 Black/Red',
+          'Штрихкод': '4820241177288',
+          'Ціна нова': 5899,
+          'Ціна стара': 6999,
+          'Матеріал оббивки': 'Екошкіра PU',
+          'Підлокітники': '2D',
+          'Максимальне навантаження': '120 кг',
+          'Гарантія': '12 місяців',
+          'Посилання (URL)': 'https://gtracer.com.ua/kresla/x-2748-black-red.html',
+          'Кількість': 1
+        },
+        {
+          'Назва товару': 'GT Racer B-1215 Gray',
+          'Штрихкод': '4820241178123',
+          'Ціна нова': 1529,
+          'Ціна стара': 1799,
+          'Матеріал оббивки': 'Дихаюча сітка',
+          'Підлокітники': 'Нерегульовані',
+          'Максимальне навантаження': '100 кг',
+          'Гарантія': '12 місяців',
+          'Посилання (URL)': 'https://gtracer.com.ua/kresla/b-1215-gray.html',
+          'Кількість': 3
+        }
+      ];
+
+      const ws = XLSX.utils.json_to_sheet(templateData);
+      ws['!cols'] = [
+        { wch: 34 }, // Назва
+        { wch: 16 }, // ШК
+        { wch: 12 }, // Ціна нова
+        { wch: 12 }, // Ціна стара
+        { wch: 22 }, // Матеріал
+        { wch: 16 }, // Підлокітники
+        { wch: 26 }, // Макс навантаження
+        { wch: 14 }, // Гарантія
+        { wch: 45 }, // Посилання
+        { wch: 10 }  // Кількість
+      ];
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Шаблон цінників');
+      XLSX.writeFile(wb, 'GT_Racer_Шаблон_Цінників.xlsx');
+    }
+
+    // Modal & Manual Form Helpers
+    function autoCalculateManualOldPrice() {
+      const price = parseFloat(document.getElementById('manualPrice').value) || 0;
+      const oldInput = document.getElementById('manualOldPrice');
+      if (price > 0 && (!oldInput.value || oldInput.dataset.autocalc === 'true')) {
+        oldInput.value = Math.round(price * 1.15);
+        oldInput.dataset.autocalc = 'true';
+      }
+    }
+
+    function autoCalculateModalOldPrice() {
+      const price = parseFloat(document.getElementById('editItemPrice').value) || 0;
+      const oldInput = document.getElementById('editItemOldPrice');
+      if (price > 0) {
+        oldInput.value = Math.round(price * 1.15);
+      }
+    }
+
+    function generateTemporaryBarcode() {
+      let code = '200' + Math.floor(100000000 + Math.random() * 900000000).toString().substring(0, 9);
+      let sum = 0;
+      for (let i = 0; i < 12; i++) {
+        let digit = parseInt(code[i], 10);
+        sum += (i % 2 === 0) ? digit : digit * 3;
+      }
+      let checkDigit = (10 - (sum % 10)) % 10;
+      let barcode = code + checkDigit;
+      document.getElementById('editItemBarcode').value = barcode;
+    }
+
+    function autoGenerateModalUrl() {
+      const name = document.getElementById('editItemName').value.trim();
+      if (name) {
+        document.getElementById('editItemUrl').value = `https://gtracer.com.ua/index.php?route=product/search&search=${encodeURIComponent(name)}`;
+      }
+    }
+
+    function setModalField(fieldId, val) {
+      const el = document.getElementById(fieldId);
+      if (el) el.value = val;
+    }
+
+    // Manual Creation (Tab 4)
+    function addManualItem() {
+      const name = document.getElementById('manualName').value.trim();
+      if (!name) {
+        alert('Вкажіть назву товару або моделі.');
+        document.getElementById('manualName').focus();
+        return;
+      }
+
+      const priceRt = parseFloat(document.getElementById('manualPrice').value) || 0;
+      const priceOld = parseFloat(document.getElementById('manualOldPrice').value) || (priceRt > 0 ? Math.round(priceRt * 1.15) : 0);
+      const barcode = document.getElementById('manualBarcode').value.trim();
+      const qty = parseInt(document.getElementById('manualQty').value, 10) || 1;
+      const material = document.getElementById('manualMaterial').value.trim() || 'Зносостійка тканина';
+      const armrests = document.getElementById('manualArmrests').value.trim() || '1D';
+      const maxLoad = document.getElementById('manualMaxLoad').value.trim() || '120 кг';
+      const warranty = document.getElementById('manualWarranty').value.trim() || '12 місяців';
+      const url = document.getElementById('manualUrl').value.trim() || `https://gtracer.com.ua/index.php?route=product/search&search=${encodeURIComponent(name)}`;
+      const autoSum = document.getElementById('chkAutoSum').checked;
+
+      const newItem = {
+        id: Date.now() + Math.random().toString(36).substr(2, 9),
+        name: name,
+        barcode: barcode,
+        price_rt: priceRt,
+        price_old: priceOld,
+        material: material,
+        armrests: armrests,
+        max_load: maxLoad,
+        warranty: warranty,
+        url: url,
+        quantity: qty,
+        needsReview: false
+      };
+
+      if (document.getElementById('chkManualSaveToDb').checked) {
+        saveCustomProductToStorage(newItem);
+      }
+
+      let existing = items.find(it => it.name.toLowerCase() === name.toLowerCase());
+      if (autoSum && existing) {
+        existing.quantity += qty;
+        if (priceRt > 0) existing.price_rt = priceRt;
+        if (priceOld > 0) existing.price_old = priceOld;
+        if (barcode) existing.barcode = barcode;
+      } else {
+        items.push(newItem);
+      }
+
+      // Reset form
+      document.getElementById('manualName').value = '';
+      document.getElementById('manualPrice').value = '';
+      document.getElementById('manualOldPrice').value = '';
+      document.getElementById('manualBarcode').value = '';
+      document.getElementById('manualQty').value = '1';
+      document.getElementById('manualUrl').value = '';
+
+      updateTableAndPreviews();
+      checkAndPromptUnmatchedItems();
     }
 
     // Process Text Input with Specifications Auto-Filling
@@ -778,6 +1283,7 @@ GT Racer X-5993 Black	2
           let load = matched ? matched.max_load : '120 кг';
           let war = matched ? matched.warranty : '12 місяців';
           let url = matched ? matched.url : `https://gtracer.com.ua/index.php?route=product/search&search=${encodeURIComponent(displayName)}`;
+          let needsReview = !matched;
 
           if (autoSum && newItemsMap[normKey]) {
             newItemsMap[normKey].quantity += qtyCand;
@@ -793,7 +1299,8 @@ GT Racer X-5993 Black	2
               max_load: load,
               warranty: war,
               url: url,
-              quantity: qtyCand
+              quantity: qtyCand,
+              needsReview: needsReview
             };
           }
         }
@@ -811,6 +1318,7 @@ GT Racer X-5993 Black	2
 
       document.getElementById('rawInputText').value = '';
       updateTableAndPreviews();
+      checkAndPromptUnmatchedItems();
     }
 
     function findProductInCatalog(query) {
@@ -832,7 +1340,14 @@ GT Racer X-5993 Black	2
       return null;
     }
 
-    // Excel Upload
+    function findProductByBarcode(barcode) {
+      if (!barcode || catalog.length === 0) return null;
+      let clean = barcode.replace(/\D/g, '');
+      if (!clean) return null;
+      return catalog.find(p => p.barcode && p.barcode.replace(/\D/g, '') === clean) || null;
+    }
+
+    // Smart Multi-Column Excel Upload Handler
     function handleFileUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -851,64 +1366,281 @@ GT Racer X-5993 Black	2
           let autoSum = document.getElementById('chkAutoSum').checked;
           let addedCount = 0;
 
-          for (let r = 0; r < rows.length; r++) {
+          // Header Detection: Search first 10 rows for recognizable columns
+          let headerRowIdx = -1;
+          let colMap = {
+            name: -1,
+            barcode: -1,
+            price_rt: -1,
+            price_old: -1,
+            material: -1,
+            armrests: -1,
+            max_load: -1,
+            warranty: -1,
+            url: -1,
+            qty: -1
+          };
+
+          for (let r = 0; r < Math.min(10, rows.length); r++) {
             let row = rows[r];
             if (!row || row.length === 0) continue;
 
-            let name = '';
-            let qty = 1;
+            let rowStr = row.map(c => String(c || '').toLowerCase().trim());
+            let matches = 0;
 
-            for (let c = 0; c < row.length; c++) {
-              let cell = String(row[c] || '').trim();
-              if (/gt racer/i.test(cell) || findProductInCatalog(cell)) {
-                name = cell;
-                for (let nc = c + 1; nc < row.length; nc++) {
-                  let val = parseInt(row[nc], 10);
-                  if (!isNaN(val) && val > 0) {
-                    qty = val;
-                    break;
-                  }
-                }
-                break;
+            for (let c = 0; c < rowStr.length; c++) {
+              let cell = rowStr[c];
+              if (!cell) continue;
+
+              if (/назва|наименование|товар|модель|номенклатура|name/i.test(cell)) {
+                colMap.name = c; matches++;
+              } else if (/штрихкод|штрих-код|шк|barcode|ean/i.test(cell)) {
+                colMap.barcode = c; matches++;
+              } else if (/стара ціна|старая цена|ціна стара|риц стара|до знижки/i.test(cell)) {
+                colMap.price_old = c; matches++;
+              } else if (/ціна нова|нова ціна|ціна|цена|нова|риц|прайс/i.test(cell)) {
+                colMap.price_rt = c; matches++;
+              } else if (/матеріал|материал|оббивка|обивка/i.test(cell)) {
+                colMap.material = c; matches++;
+              } else if (/підлокітники|подлокотники|підлокітник|подлокотник/i.test(cell)) {
+                colMap.armrests = c; matches++;
+              } else if (/навантаження|нагрузка|макс/i.test(cell)) {
+                colMap.max_load = c; matches++;
+              } else if (/гарантія|гарантия/i.test(cell)) {
+                colMap.warranty = c; matches++;
+              } else if (/посилання|ссылка|url|qr/i.test(cell)) {
+                colMap.url = c; matches++;
+              } else if (/кількість|кол-во|кол|к-сть|qty|count/i.test(cell)) {
+                colMap.qty = c; matches++;
               }
             }
 
-            if (name && !name.toLowerCase().includes('название') && !name.toLowerCase().includes('товар')) {
-              let matched = findProductInCatalog(name);
-              let barcode = matched ? matched.barcode : '';
-              let displayName = matched ? matched.name : name;
-              let priceRt = matched && matched.price_rt ? parseFloat(matched.price_rt) : 0;
-              let priceOld = priceRt > 0 ? Math.round(priceRt * 1.15) : 0;
+            if (matches >= 2) {
+              headerRowIdx = r;
+              break;
+            }
+          }
+
+          // Case A: Structured Excel with Headers
+          if (headerRowIdx >= 0 && (colMap.name >= 0 || colMap.barcode >= 0)) {
+            for (let r = headerRowIdx + 1; r < rows.length; r++) {
+              let row = rows[r];
+              if (!row || row.length === 0) continue;
+
+              let rawName = colMap.name >= 0 ? String(row[colMap.name] || '').trim() : '';
+              let rawBarcode = colMap.barcode >= 0 ? String(row[colMap.barcode] || '').trim() : '';
+              let rawPriceRt = colMap.price_rt >= 0 ? parseFloat(String(row[colMap.price_rt] || '').replace(/[^\d.]/g, '')) || 0 : 0;
+              let rawPriceOld = colMap.price_old >= 0 ? parseFloat(String(row[colMap.price_old] || '').replace(/[^\d.]/g, '')) || 0 : 0;
+              let rawMaterial = colMap.material >= 0 ? String(row[colMap.material] || '').trim() : '';
+              let rawArmrests = colMap.armrests >= 0 ? String(row[colMap.armrests] || '').trim() : '';
+              let rawMaxLoad = colMap.max_load >= 0 ? String(row[colMap.max_load] || '').trim() : '';
+              let rawWarranty = colMap.warranty >= 0 ? String(row[colMap.warranty] || '').trim() : '';
+              let rawUrl = colMap.url >= 0 ? String(row[colMap.url] || '').trim() : '';
+              let rawQty = colMap.qty >= 0 ? parseInt(String(row[colMap.qty] || '').replace(/\D/g, ''), 10) || 1 : 1;
+
+              if (!rawName && !rawBarcode) continue;
+
+              let matched = findProductByBarcode(rawBarcode) || findProductInCatalog(rawName);
+
+              let displayName = rawName || (matched ? matched.name : `Товар ${rawBarcode}`);
+              let finalBarcode = rawBarcode || (matched ? matched.barcode : '');
+              let finalPriceRt = rawPriceRt > 0 ? rawPriceRt : (matched && matched.price_rt ? parseFloat(matched.price_rt) : 0);
+              let finalPriceOld = rawPriceOld > 0 ? rawPriceOld : (finalPriceRt > 0 ? Math.round(finalPriceRt * 1.15) : 0);
+              let finalMaterial = rawMaterial || (matched ? matched.material : 'Зносостійка тканина');
+              let finalArmrests = rawArmrests || (matched ? matched.armrests : '1D');
+              let finalMaxLoad = rawMaxLoad || (matched ? matched.max_load : '120 кг');
+              let finalWarranty = rawWarranty || (matched ? matched.warranty : '12 місяців');
+              let finalUrl = rawUrl || (matched ? matched.url : `https://gtracer.com.ua/index.php?route=product/search&search=${encodeURIComponent(displayName)}`);
+              let needsReview = !matched && (!rawMaterial || !rawPriceRt || !finalBarcode);
 
               let existing = items.find(it => it.name.toLowerCase() === displayName.toLowerCase());
               if (autoSum && existing) {
-                existing.quantity += qty;
+                existing.quantity += rawQty;
+                if (finalPriceRt > 0) existing.price_rt = finalPriceRt;
+                if (finalPriceOld > 0) existing.price_old = finalPriceOld;
+                if (finalBarcode) existing.barcode = finalBarcode;
               } else {
                 items.push({
                   id: Date.now() + Math.random().toString(36).substr(2, 9),
                   name: displayName,
-                  barcode: barcode,
-                  price_rt: priceRt,
-                  price_old: priceOld,
-                  material: matched ? matched.material : 'Зносостійка тканина',
-                  armrests: matched ? matched.armrests : '1D',
-                  max_load: matched ? matched.max_load : '120 кг',
-                  warranty: matched ? matched.warranty : '12 місяців',
-                  url: matched ? matched.url : `https://gtracer.com.ua/index.php?route=product/search&search=${encodeURIComponent(displayName)}`,
-                  quantity: qty
+                  barcode: finalBarcode,
+                  price_rt: finalPriceRt,
+                  price_old: finalPriceOld,
+                  material: finalMaterial,
+                  armrests: finalArmrests,
+                  max_load: finalMaxLoad,
+                  warranty: finalWarranty,
+                  url: finalUrl,
+                  quantity: rawQty,
+                  needsReview: needsReview
                 });
               }
               addedCount++;
             }
+          } else {
+            // Case B: Fallback cell scanning (standard invoice/delivery list)
+            for (let r = 0; r < rows.length; r++) {
+              let row = rows[r];
+              if (!row || row.length === 0) continue;
+
+              let name = '';
+              let qty = 1;
+
+              for (let c = 0; c < row.length; c++) {
+                let cell = String(row[c] || '').trim();
+                if (/gt racer/i.test(cell) || findProductInCatalog(cell)) {
+                  name = cell;
+                  for (let nc = c + 1; nc < row.length; nc++) {
+                    let val = parseInt(row[nc], 10);
+                    if (!isNaN(val) && val > 0) {
+                      qty = val;
+                      break;
+                    }
+                  }
+                  break;
+                }
+              }
+
+              if (name && !name.toLowerCase().includes('название') && !name.toLowerCase().includes('товар')) {
+                let matched = findProductInCatalog(name);
+                let barcode = matched ? matched.barcode : '';
+                let displayName = matched ? matched.name : name;
+                let priceRt = matched && matched.price_rt ? parseFloat(matched.price_rt) : 0;
+                let priceOld = priceRt > 0 ? Math.round(priceRt * 1.15) : 0;
+                let needsReview = !matched;
+
+                let existing = items.find(it => it.name.toLowerCase() === displayName.toLowerCase());
+                if (autoSum && existing) {
+                  existing.quantity += qty;
+                } else {
+                  items.push({
+                    id: Date.now() + Math.random().toString(36).substr(2, 9),
+                    name: displayName,
+                    barcode: barcode,
+                    price_rt: priceRt,
+                    price_old: priceOld,
+                    material: matched ? matched.material : 'Зносостійка тканина',
+                    armrests: matched ? matched.armrests : '1D',
+                    max_load: matched ? matched.max_load : '120 кг',
+                    warranty: matched ? matched.warranty : '12 місяців',
+                    url: matched ? matched.url : `https://gtracer.com.ua/index.php?route=product/search&search=${encodeURIComponent(displayName)}`,
+                    quantity: qty,
+                    needsReview: needsReview
+                  });
+                }
+                addedCount++;
+              }
+            }
           }
 
           status.textContent = `Успішно завантажено позицій: ${addedCount}`;
+          e.target.value = '';
           updateTableAndPreviews();
+          checkAndPromptUnmatchedItems();
         } catch (err) {
           status.textContent = `Помилка: ${err.message}`;
         }
       };
       reader.readAsArrayBuffer(file);
+    }
+
+    // Unmatched / Missing Items Alert and Review Modal Logic
+    function checkAndPromptUnmatchedItems() {
+      const banner = document.getElementById('unmatchedBanner');
+      const title = document.getElementById('unmatchedBannerTitle');
+      const badge = document.getElementById('unmatchedBannerBadge');
+      if (!banner) return;
+
+      const unmatched = items.filter(it => it.needsReview || !it.barcode || !it.price_rt);
+      if (unmatched.length > 0) {
+        banner.classList.remove('hidden');
+        title.textContent = `Увага: ${unmatched.length} товарів потребують перевірки характеристик або ШК`;
+        badge.textContent = unmatched.length;
+      } else {
+        banner.classList.add('hidden');
+      }
+    }
+
+    function openNextUnmatchedModal() {
+      const next = items.find(it => it.needsReview || !it.barcode || !it.price_rt);
+      if (next) {
+        openEditItemModal(next.id);
+      } else {
+        alert('Всі характеристики товарів заповнено!');
+        checkAndPromptUnmatchedItems();
+      }
+    }
+
+    function openEditItemModal(id) {
+      const item = items.find(it => it.id === id);
+      if (!item) return;
+
+      document.getElementById('editItemId').value = item.id;
+      document.getElementById('editItemName').value = item.name;
+      document.getElementById('editItemPrice').value = item.price_rt || '';
+      document.getElementById('editItemOldPrice').value = item.price_old || '';
+      document.getElementById('editItemQty').value = item.quantity || 1;
+      document.getElementById('editItemBarcode').value = item.barcode || '';
+      document.getElementById('editItemMaterial').value = item.material || 'Зносостійка тканина';
+      document.getElementById('editItemArmrests').value = item.armrests || '1D';
+      document.getElementById('editItemMaxLoad').value = item.max_load || '120 кг';
+      document.getElementById('editItemWarranty').value = item.warranty || '12 місяців';
+      document.getElementById('editItemUrl').value = item.url || `https://gtracer.com.ua/index.php?route=product/search&search=${encodeURIComponent(item.name)}`;
+
+      // Check if more unmatched items exist after this one
+      const remaining = items.filter(it => it.id !== item.id && (it.needsReview || !it.barcode || !it.price_rt));
+      const btnNext = document.getElementById('btnModalSaveAndNext');
+      if (btnNext) {
+        if (remaining.length > 0) {
+          btnNext.classList.remove('hidden');
+          btnNext.querySelector('span').textContent = `Зберегти і наступний (${remaining.length})`;
+        } else {
+          btnNext.querySelector('span').textContent = 'Зберегти';
+        }
+      }
+
+      document.getElementById('modalItemTitle').textContent = `Характеристики: ${item.name.substring(0, 32)}`;
+      document.getElementById('modalEditItem').classList.remove('hidden');
+    }
+
+    function closeEditItemModal() {
+      document.getElementById('modalEditItem').classList.add('hidden');
+    }
+
+    function saveModalEditItem(andNext) {
+      const id = document.getElementById('editItemId').value;
+      const item = items.find(it => it.id === id);
+      if (!item) return;
+
+      item.name = document.getElementById('editItemName').value.trim() || item.name;
+      item.price_rt = parseFloat(document.getElementById('editItemPrice').value) || 0;
+      item.price_old = parseFloat(document.getElementById('editItemOldPrice').value) || (item.price_rt > 0 ? Math.round(item.price_rt * 1.15) : 0);
+      item.quantity = parseInt(document.getElementById('editItemQty').value, 10) || 1;
+      item.barcode = document.getElementById('editItemBarcode').value.trim();
+      item.material = document.getElementById('editItemMaterial').value.trim() || 'Зносостійка тканина';
+      item.armrests = document.getElementById('editItemArmrests').value.trim() || '1D';
+      item.max_load = document.getElementById('editItemMaxLoad').value.trim() || '120 кг';
+      item.warranty = document.getElementById('editItemWarranty').value.trim() || '12 місяців';
+      item.url = document.getElementById('editItemUrl').value.trim() || `https://gtracer.com.ua/index.php?route=product/search&search=${encodeURIComponent(item.name)}`;
+      item.needsReview = false;
+
+      if (document.getElementById('chkModalSaveToDb').checked) {
+        saveCustomProductToStorage(item);
+      }
+
+      updateTableAndPreviews();
+      checkAndPromptUnmatchedItems();
+
+      if (andNext) {
+        const next = items.find(it => it.needsReview || !it.barcode || !it.price_rt);
+        if (next) {
+          openEditItemModal(next.id);
+        } else {
+          closeEditItemModal();
+        }
+      } else {
+        closeEditItemModal();
+      }
     }
 
     // Catalog Search Autocomplete
@@ -982,7 +1714,8 @@ GT Racer X-5993 Black	2
           max_load: selectedCatalogItem.max_load || '120 кг',
           warranty: selectedCatalogItem.warranty || '12 місяців',
           url: selectedCatalogItem.url || `https://gtracer.com.ua/index.php?route=product/search&search=${encodeURIComponent(selectedCatalogItem.name)}`,
-          quantity: qty
+          quantity: qty,
+          needsReview: !selectedCatalogItem.barcode
         });
       }
 
@@ -991,6 +1724,7 @@ GT Racer X-5993 Black	2
       document.getElementById('catalogItemQty').value = '1';
       selectedCatalogItem = null;
       updateTableAndPreviews();
+      checkAndPromptUnmatchedItems();
     }
 
     function rematchBarcodes() {
@@ -1054,17 +1788,21 @@ GT Racer X-5993 Black	2
     function renderTable() {
       const tbody = document.getElementById('itemsTableBody');
       if (items.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-gray-400">Список порожній. Вставте дані зліва.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-gray-400">Список порожній. Вставте дані зліва або скористайтеся шаблоном.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = items.map((it, idx) => {
+        const needsAttention = it.needsReview || !it.barcode || !it.price_rt;
         return `
-          <tr class="hover:bg-gray-50 transition">
+          <tr class="hover:bg-gray-50 transition ${needsAttention ? 'bg-amber-50/40' : ''}">
             <td class="px-2 py-2 text-gray-400 font-mono">${idx + 1}</td>
             <td class="px-3 py-2">
-              <div class="font-bold text-gray-900">${escapeHtml(it.name)}</div>
-              <div class="text-[10px] text-gray-400 font-mono">${it.barcode || 'Без штрихкоду'}</div>
+              <div class="font-bold text-gray-900 flex items-center gap-1.5 flex-wrap">
+                <span>${escapeHtml(it.name)}</span>
+                ${needsAttention ? `<span onclick="openEditItemModal('${it.id}')" class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-800 hover:bg-amber-200 cursor-pointer border border-amber-300" title="Натисніть для заповнення характеристик">⚠️ Уточнити</span>` : ''}
+              </div>
+              <div class="text-[10px] text-gray-400 font-mono">${it.barcode || '<span class=\"text-amber-600\">Без штрихкоду</span>'}</div>
             </td>
             <td class="px-2 py-2 text-center">
               <div class="flex items-center justify-center gap-1">
@@ -1087,9 +1825,14 @@ GT Racer X-5993 Black	2
               </div>
             </td>
             <td class="px-2 py-2 text-center">
-              <button onclick="deleteItem('${it.id}')" class="text-gray-400 hover:text-red-600 transition p-1">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-              </button>
+              <div class="flex items-center justify-center gap-1">
+                <button onclick="openEditItemModal('${it.id}')" class="text-gray-400 hover:text-blue-600 transition p-1" title="Редагувати характеристики">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                </button>
+                <button onclick="deleteItem('${it.id}')" class="text-gray-400 hover:text-red-600 transition p-1" title="Видалити">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+              </div>
             </td>
           </tr>
         `;
