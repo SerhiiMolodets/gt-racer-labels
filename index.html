@@ -335,13 +335,10 @@
             <div class="p-5">
               <!-- Tab 1: Text Paste -->
               <div id="tabContentText" class="space-y-4">
-                <div class="flex justify-between items-center">
+                <div>
                   <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">
                     Вставте рядки з Excel:
                   </label>
-                  <button onclick="loadSampleData()" class="text-xs text-red-600 hover:text-red-700 font-semibold underline">
-                    Зразок (Розетка 16.10)
-                  </button>
                 </div>
 
                 <textarea id="rawInputText" rows="8" class="w-full text-xs font-mono p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="Скопіюйте стовпчики з назвою та кількістю з Excel та вставте сюди...
@@ -709,23 +706,6 @@ GT Racer X-5993 Black	2
 
     function capitalize(s) {
       return s.charAt(0).toUpperCase() + s.slice(1);
-    }
-
-    function loadSampleData() {
-      const sample = `Сирець\tGT Racer X-2339 Fabric Black/Gray\t2
-Сирець\tGT Racer X-2729 Fabric Black\t1
-Сирець\tGT Racer B-5744 Gray\t1
-Бровари\tGT Racer X-2305 Fabric Gray\t1
-Бровари\tGT Racer B-601 Gray/Gray\t1
-Бровари\tGT Racer B-541F Black\t1
-Петрівці\tGT Racer X-7485 Fabric Dark Gray XL\t1
-Бровари\tGT Racer X-801A Black (W-21, B-41)\t1
-Бровари\tGT Racer X-2339 Fabric Black/Blue\t1
-Бровари\tGT Racer X-2339 Fabric Black/Red\t1
-Бровари\tGT Racer X-2324 Fabric Black Suede\t1
-Бровари\tGT Racer X-5993 Black\t2
-Бровари\tGT Racer X-2339 Fabric Black/Pink\t3`;
-      document.getElementById('rawInputText').value = sample;
     }
 
     // Process Text Input with Specifications Auto-Filling
