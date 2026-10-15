@@ -1864,6 +1864,11 @@ GT Racer X-5993 Black	2
                     placeholder="—" class="w-14 text-right text-[11px] text-gray-400 line-through bg-transparent border-b border-dashed border-gray-300 p-0 focus:ring-0 focus:outline-none hover:border-gray-500 focus:border-red-500 transition" title="Стара акційна ціна">
                   <span class="text-[10px]">₴</span>
                 </div>
+                ${it.price_old > 0 && it.price_rt > 0 && it.price_old <= it.price_rt ? `
+                <button type="button" onclick="swapItemPrices('${it.id}')" title="Стара ціна (${it.price_old}) менша за нову (${it.price_rt})! На ціннику показується лише актуальна. Натисніть, щоб поміняти місцями" class="text-[9px] text-amber-700 bg-amber-100 hover:bg-amber-200 px-1 py-0.5 rounded transition flex items-center gap-0.5 cursor-pointer font-semibold shadow-xs">
+                  ⚠️ ⇄ поміняти
+                </button>
+                ` : ''}
               </div>
             </td>
 
@@ -1943,7 +1948,13 @@ GT Racer X-5993 Black	2
     function updateItemPrice(id, val) {
       let item = items.find(it => it.id === id);
       if (item) {
-        item.price_rt = parseFloat(val) || 0;
+        const newPrice = parseFloat(val) || 0;
+        item.price_rt = newPrice;
+        // If old price is now less than or equal to new price, recalculate default promo price
+        const pct = parseFloat(document.getElementById('cfgPromoDiscountPct')?.value) || 15;
+        if (newPrice > 0 && (!item.price_old || item.price_old <= newPrice)) {
+          item.price_old = Math.round(newPrice * (1 + pct / 100));
+        }
         updateTableAndPreviews();
       }
     }
@@ -1952,6 +1963,16 @@ GT Racer X-5993 Black	2
       let item = items.find(it => it.id === id);
       if (item) {
         item.price_old = parseFloat(val) || 0;
+        updateTableAndPreviews();
+      }
+    }
+
+    function swapItemPrices(id) {
+      let item = items.find(it => it.id === id);
+      if (item) {
+        let temp = item.price_rt;
+        item.price_rt = item.price_old;
+        item.price_old = temp;
         updateTableAndPreviews();
       }
     }

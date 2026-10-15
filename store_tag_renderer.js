@@ -59,21 +59,22 @@ function generateStoreTagSvgString(item, qrDataUrl) {
 
   // Dynamic typography and positioning to guarantee "грн" NEVER overflows card border
   // Tag width is 309, right border rect is at 307. Right margin x = 288 gives clean 19px padding.
-  let newPriceFontSize = 64;
-  let newUnitFontSize = 33;
+  let newPriceFontSize = hasOldPrice ? 64 : 68;
+  let newUnitFontSize = hasOldPrice ? 33 : 35;
+  const newPriceY = hasOldPrice ? 350.8818 : 334;
 
   if (pNewVal > 99999) {
-    newPriceFontSize = 46;
-    newUnitFontSize = 24;
+    newPriceFontSize = hasOldPrice ? 46 : 50;
+    newUnitFontSize = hasOldPrice ? 24 : 26;
   } else if (pNewVal > 9999) {
-    newPriceFontSize = 54;
-    newUnitFontSize = 28;
+    newPriceFontSize = hasOldPrice ? 54 : 58;
+    newUnitFontSize = hasOldPrice ? 28 : 30;
   } else if (pNewVal > 999) {
-    newPriceFontSize = 64;
-    newUnitFontSize = 33;
+    newPriceFontSize = hasOldPrice ? 64 : 68;
+    newUnitFontSize = hasOldPrice ? 33 : 35;
   } else if (pNewVal > 0) {
-    newPriceFontSize = 72;
-    newUnitFontSize = 38;
+    newPriceFontSize = hasOldPrice ? 72 : 76;
+    newUnitFontSize = hasOldPrice ? 38 : 40;
   } else {
     newPriceFontSize = 24;
     newUnitFontSize = 0;
@@ -95,7 +96,7 @@ function generateStoreTagSvgString(item, qrDataUrl) {
 
   // New price: text-anchor="end" locked to right margin x = 288, or centered if no price
   const newPriceXml = pNewVal > 0 ? `
-  <text x="288" y="350.8818" text-anchor="end" xml:space="preserve">
+  <text x="288" y="${newPriceY}" text-anchor="end" xml:space="preserve">
     <tspan class="st2" style="font-size: ${newPriceFontSize}px; letter-spacing: -0.5px;">${pNewStr}</tspan><tspan class="st2" style="font-size: ${newUnitFontSize}px;" dx="6"> грн</tspan>
   </text>
   ` : `
