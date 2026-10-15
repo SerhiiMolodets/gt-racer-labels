@@ -3,35 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GT Racer — Генератор Етикеток та Штрихкодів (47×24 мм)</title>
+  <title>GT Racer — Генератор Етикеток та Цінників для Магазину</title>
   
-  <!-- Offline Libraries with CDN fallbacks -->
+  <!-- Favicon: Inline SVG + PNG + ICO for 100% browser compatibility -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23dc2626'/><text x='50%' y='68%' font-family='Arial, Helvetica, sans-serif' font-weight='900' font-size='56' fill='white' text-anchor='middle'>GT</text></svg>">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="shortcut icon" href="favicon.ico">
+
+  <!-- Fonts & Libraries -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="libs/tailwind.min.css">
   <script src="libs/JsBarcode.all.min.js"></script>
+  <script src="libs/qrcode.min.js"></script>
   <script src="libs/xlsx.full.min.js"></script>
   <script src="libs/jspdf.umd.min.js"></script>
   <script src="products_data.js"></script>
 
   <style>
-    /* Print Styles: Exact 47x24mm for Thermal Printers */
+    :root {
+      --gt-red: #D32F2F;
+      --gt-black: #111111;
+      --gt-gray: #757575;
+      --gt-light: #F5F5F5;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    /* =========================================
+       PRINT STYLES: MODE 1 (THERMAL LABELS 47x24mm)
+       ========================================= */
     @media print {
-      @page {
-        size: 47mm 24mm;
-        margin: 0;
-      }
-      html, body {
-        width: 47mm;
-        height: 24mm;
+      body.mode-labels {
+        width: 47mm !important;
+        height: 24mm !important;
         margin: 0 !important;
         padding: 0 !important;
         background: #fff !important;
       }
-      .no-print {
+      body.mode-labels .no-print {
         display: none !important;
       }
-      #printContainer {
+      body.mode-labels #printContainerLabels {
         display: block !important;
       }
+      body.mode-labels #printContainerTags {
+        display: none !important;
+      }
+      @page {
+        margin: 0;
+      }
+      body.mode-labels @page {
+        size: 47mm 24mm;
+        margin: 0;
+      }
+
       .thermal-label {
         width: 47mm !important;
         height: 24mm !important;
@@ -51,10 +78,49 @@
         background: #fff !important;
         overflow: hidden !important;
       }
+
+      /* =========================================
+         PRINT STYLES: MODE 2 (STORE PRICE TAGS A4)
+         ========================================= */
+      body.mode-tags {
+        background: #fff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      body.mode-tags .no-print {
+        display: none !important;
+      }
+      body.mode-tags #printContainerLabels {
+        display: none !important;
+      }
+      body.mode-tags #printContainerTags {
+        display: block !important;
+        padding: 10mm !important;
+      }
+      body.mode-tags @page {
+        size: A4 portrait;
+        margin: 10mm;
+      }
+
+      .tags-print-grid-3 {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 15px !important;
+      }
+      .tags-print-grid-2 {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 20px !important;
+      }
+      .tags-print-single {
+        display: block !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
     }
 
     @media screen {
-      #printContainer {
+      #printContainerLabels, #printContainerTags {
         display: none;
       }
     }
@@ -95,25 +161,152 @@
       margin-top: 0.8mm;
       display: block;
     }
+
+    /* Store Price Tag Card Design (From GT Racer In-store Template) */
+    .store-tag-card {
+      font-family: 'Montserrat', sans-serif;
+      border: 2px solid var(--gt-black);
+      border-radius: 12px;
+      padding: 16px 14px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      page-break-inside: avoid;
+      background-color: #ffffff;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      width: 100%;
+      max-width: 280px;
+      height: 410px;
+      box-sizing: border-box;
+      margin: 0 auto;
+    }
+
+    .store-tag-card::before {
+      content: "";
+      position: absolute;
+      top: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40%;
+      height: 4px;
+      background-color: var(--gt-red);
+      border-radius: 4px;
+    }
+
+    .store-tag-logo {
+      font-size: 20px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+      color: #111;
+    }
+
+    .store-tag-logo span {
+      color: var(--gt-red);
+    }
+
+    .store-tag-title {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.3;
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      color: #1f2937;
+    }
+
+    .store-tag-prices {
+      background-color: var(--gt-light);
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 12px;
+    }
+
+    .store-tag-old-price {
+      font-size: 13px;
+      color: var(--gt-gray);
+      text-decoration: line-through;
+      margin-bottom: 2px;
+      font-weight: 600;
+    }
+
+    .store-tag-new-price {
+      font-size: 24px;
+      color: var(--gt-red);
+      font-weight: 900;
+      letter-spacing: -0.5px;
+    }
+
+    .store-tag-qr-box {
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .store-tag-qr-box img, .store-tag-qr-box canvas {
+      display: block;
+      margin: 0 auto;
+      width: 125px;
+      height: 125px;
+      border-radius: 6px;
+    }
+
+    .store-tag-scan-hint {
+      font-size: 9px;
+      font-weight: 600;
+      color: #6b7280;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .store-tag-barcode {
+      margin-top: 6px;
+      display: flex;
+      justify-content: center;
+    }
   </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans min-h-screen">
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen mode-labels">
 
   <div class="no-print">
     <!-- Top Navigation Bar -->
     <header class="bg-gray-900 text-white shadow-md border-b border-gray-800 sticky top-0 z-50">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap justify-between items-center gap-4">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap justify-between items-center gap-4">
+        
+        <!-- Brand & Title -->
         <div class="flex items-center space-x-3">
           <div class="w-9 h-9 bg-red-600 rounded-lg flex items-center justify-center font-black tracking-wider text-white text-lg shadow">
             GT
           </div>
           <div>
-            <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-              GT Racer — Друк Етикеток
-              <span class="text-xs font-medium px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-800">47×24 мм</span>
+            <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
+              GT Racer — Центр Друку
+              <span id="activeModeBadge" class="text-xs font-medium px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-800">
+                Етикетки (47×24 мм)
+              </span>
             </h1>
-            <p class="text-xs text-gray-400">Спеціально для термопринтерів та EAN-13 штрихкодів</p>
+            <p class="text-[11px] text-gray-400">Єдина веб-адмінка для наклейок зі штрихкодами та цінників для шоуруму</p>
           </div>
+        </div>
+
+        <!-- Mode Switcher Tabs (Top Center) -->
+        <div class="flex bg-gray-800 p-1 rounded-xl border border-gray-700 text-xs font-semibold">
+          <button onclick="switchAppMode('labels')" id="modeBtnLabels" class="py-1.5 px-3.5 rounded-lg bg-red-600 text-white shadow flex items-center gap-1.5 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+            Етикетки на коробки (47×24 мм)
+          </button>
+          <button onclick="switchAppMode('tags')" id="modeBtnTags" class="py-1.5 px-3.5 rounded-lg text-gray-400 hover:text-white flex items-center gap-1.5 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            Цінники для магазину (А4 / А6)
+          </button>
         </div>
 
         <!-- Sync and Stats -->
@@ -124,34 +317,34 @@
           </div>
           <button id="btnSyncGoogle" onclick="syncWithGoogleSheet()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition shadow-sm">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-            Оновити з Google Таблиці
+            Оновити з Google Sheets
           </button>
         </div>
       </div>
     </header>
 
-    <!-- Main Content Grid -->
+    <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       
-      <!-- Top Row: Input on left, Preview & Print on right -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         <!-- Left Column: Input Form (5 cols) -->
         <div class="lg:col-span-5 space-y-6">
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            
             <!-- Tabs Header -->
-            <div class="border-b border-gray-200 bg-gray-50 flex text-sm font-medium">
-              <button onclick="switchTab('text')" id="tabBtnText" class="flex-1 py-3 px-4 text-center border-b-2 border-red-600 text-red-600 font-semibold bg-white flex items-center justify-center gap-2">
+            <div class="border-b border-gray-200 bg-gray-50 flex text-xs font-semibold">
+              <button onclick="switchTab('text')" id="tabBtnText" class="flex-1 py-3 px-3 text-center border-b-2 border-red-600 text-red-600 font-bold bg-white flex items-center justify-center gap-1.5">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 Вставити з Excel
               </button>
-              <button onclick="switchTab('file')" id="tabBtnFile" class="flex-1 py-3 px-4 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 flex items-center justify-center gap-2">
+              <button onclick="switchTab('file')" id="tabBtnFile" class="flex-1 py-3 px-3 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 flex items-center justify-center gap-1.5">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                 Файл (.xlsx)
               </button>
-              <button onclick="switchTab('search')" id="tabBtnSearch" class="flex-1 py-3 px-4 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 flex items-center justify-center gap-2">
+              <button onclick="switchTab('search')" id="tabBtnSearch" class="flex-1 py-3 px-3 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 flex items-center justify-center gap-1.5">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                Пошук
+                Пошук товару
               </button>
             </div>
 
@@ -159,15 +352,15 @@
               <!-- Tab 1: Text Paste -->
               <div id="tabContentText" class="space-y-4">
                 <div class="flex justify-between items-center">
-                  <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Вставте скопійовані рядки з Excel:
+                  <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    Вставте рядки з Excel:
                   </label>
-                  <button onclick="loadSampleData()" class="text-xs text-red-600 hover:text-red-700 font-medium underline">
-                    Заповнити зразок (Розетка 16.10)
+                  <button onclick="loadSampleData()" class="text-xs text-red-600 hover:text-red-700 font-semibold underline">
+                    Зразок (Розетка 16.10)
                   </button>
                 </div>
 
-                <textarea id="rawInputText" rows="9" class="w-full text-xs font-mono p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="Скопіюйте стовпчики з назвою та кількістю з Excel та вставте сюди...
+                <textarea id="rawInputText" rows="8" class="w-full text-xs font-mono p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="Скопіюйте стовпчики з назвою та кількістю з Excel та вставте сюди...
 Приклад:
 GT Racer X-2339 Fabric Black/Gray	2
 GT Racer X-2729 Fabric Black	1
@@ -175,16 +368,16 @@ GT Racer X-5993 Black	2
 або всю накладну з Excel"></textarea>
 
                 <div class="flex items-center justify-between text-xs text-gray-600">
-                  <label class="flex items-center gap-2 cursor-pointer">
+                  <label class="flex items-center gap-2 cursor-pointer font-medium">
                     <input type="checkbox" id="chkAutoSum" checked class="rounded text-red-600 focus:ring-red-500">
                     <span>Автоматично сумувати однакові позиції</span>
                   </label>
                   <button onclick="document.getElementById('rawInputText').value = ''" class="text-gray-400 hover:text-gray-600">Очистити</button>
                 </div>
 
-                <button onclick="processTextInput()" class="w-full py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg shadow-sm transition flex items-center justify-center gap-2 text-sm">
+                <button onclick="processTextInput()" class="w-full py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow transition flex items-center justify-center gap-2 text-sm">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                  Обробити та додати до друку
+                  Обробити та додати до черги
                 </button>
               </div>
 
@@ -192,65 +385,102 @@ GT Racer X-5993 Black	2
               <div id="tabContentFile" class="space-y-4 hidden">
                 <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-red-500 transition cursor-pointer" onclick="document.getElementById('fileUploadInput').click()">
                   <svg class="w-10 h-10 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                  <p class="text-sm font-medium text-gray-700">Перетягніть Excel файл сюди або натисніть для вибору</p>
+                  <p class="text-sm font-semibold text-gray-700">Перетягніть Excel файл або натисніть</p>
                   <p class="text-xs text-gray-500 mt-1">Підтримуються формати .xlsx, .xls, .csv</p>
                   <input type="file" id="fileUploadInput" accept=".xlsx,.xls,.csv" class="hidden" onchange="handleFileUpload(event)">
                 </div>
-                <div id="fileUploadStatus" class="text-xs text-gray-600"></div>
+                <div id="fileUploadStatus" class="text-xs text-gray-600 font-medium"></div>
               </div>
 
               <!-- Tab 3: Catalog Search -->
               <div id="tabContentSearch" class="space-y-4 hidden">
                 <div>
-                  <label class="block text-xs font-semibold text-gray-700 mb-1">Пошук товару в каталозі:</label>
-                  <input type="text" id="catalogSearchInput" oninput="filterCatalogSearch()" placeholder="Введіть назву, серію або колір..." class="w-full text-sm p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
-                  <div id="catalogSearchResults" class="max-h-48 overflow-y-auto mt-2 border border-gray-200 rounded-lg divide-y divide-gray-100 hidden bg-white shadow-lg"></div>
+                  <label class="block text-xs font-semibold text-gray-700 mb-1">Пошук товару в базі GT Racer:</label>
+                  <input type="text" id="catalogSearchInput" oninput="filterCatalogSearch()" placeholder="Введіть назву, серію (напр. X-2339) або колір..." class="w-full text-sm p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                  <div id="catalogSearchResults" class="max-h-52 overflow-y-auto mt-2 border border-gray-200 rounded-lg divide-y divide-gray-100 hidden bg-white shadow-xl"></div>
                 </div>
-                <div class="flex items-center gap-3">
-                  <div class="w-24">
-                    <label class="block text-xs text-gray-600 mb-1">Кількість:</label>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs text-gray-600 mb-1">Кількість (шт):</label>
                     <input type="number" id="catalogItemQty" value="1" min="1" class="w-full text-sm p-2 border border-gray-300 rounded-lg text-center font-bold">
                   </div>
-                  <div class="flex-1">
-                    <label class="block text-xs text-gray-600 mb-1">&nbsp;</label>
-                    <button onclick="addSelectedCatalogItem()" class="w-full py-2 px-4 bg-gray-900 hover:bg-black text-white text-sm font-medium rounded-lg transition">
-                      Додати позицію
-                    </button>
+                  <div>
+                    <label class="block text-xs text-gray-600 mb-1">Ціна продажу (грн):</label>
+                    <input type="number" id="catalogItemPrice" placeholder="Авто з бази" class="w-full text-sm p-2 border border-gray-300 rounded-lg text-center font-semibold text-red-600">
                   </div>
                 </div>
+                <button onclick="addSelectedCatalogItem()" class="w-full py-2.5 px-4 bg-gray-900 hover:bg-black text-white text-sm font-semibold rounded-lg transition">
+                  Додати товар до списку
+                </button>
               </div>
 
             </div>
           </div>
 
-          <!-- Label Settings (Adjustable sizes) -->
+          <!-- Dynamic Settings Box (Changes based on mode) -->
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-            <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3 flex items-center justify-between">
-              <span>Параметри етикетки</span>
-              <span class="text-xs font-normal text-gray-500">За замовчуванням під термопринтер</span>
-            </h3>
-            <div class="grid grid-cols-2 gap-3 text-xs">
-              <div>
-                <label class="text-gray-600 block mb-1">Ширина (мм):</label>
-                <input type="number" id="cfgWidthMm" value="47" step="1" onchange="renderAllPreviews()" class="w-full p-2 border rounded font-semibold text-center">
-              </div>
-              <div>
-                <label class="text-gray-600 block mb-1">Висота (мм):</label>
-                <input type="number" id="cfgHeightMm" value="24" step="1" onchange="renderAllPreviews()" class="w-full p-2 border rounded font-semibold text-center">
-              </div>
-              <div>
-                <label class="text-gray-600 block mb-1">Розмір шрифту (pt):</label>
-                <input type="number" id="cfgFontSize" value="8" step="0.5" onchange="renderAllPreviews()" class="w-full p-2 border rounded font-semibold text-center">
-              </div>
-              <div>
-                <label class="text-gray-600 block mb-1">Висота штрихкоду (мм):</label>
-                <input type="number" id="cfgBarcodeHeight" value="11" step="0.5" onchange="renderAllPreviews()" class="w-full p-2 border rounded font-semibold text-center">
+            
+            <!-- Settings for Labels Mode -->
+            <div id="settingsBoxLabels">
+              <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3 flex items-center justify-between">
+                <span>Параметри етикетки</span>
+                <span class="text-xs font-normal text-gray-500">Під рулон термопринтера</span>
+              </h3>
+              <div class="grid grid-cols-2 gap-3 text-xs">
+                <div>
+                  <label class="text-gray-600 block mb-1">Ширина (мм):</label>
+                  <input type="number" id="cfgWidthMm" value="47" step="1" onchange="renderAllPreviews()" class="w-full p-2 border rounded font-semibold text-center">
+                </div>
+                <div>
+                  <label class="text-gray-600 block mb-1">Висота (мм):</label>
+                  <input type="number" id="cfgHeightMm" value="24" step="1" onchange="renderAllPreviews()" class="w-full p-2 border rounded font-semibold text-center">
+                </div>
+                <div>
+                  <label class="text-gray-600 block mb-1">Розмір шрифту (pt):</label>
+                  <input type="number" id="cfgFontSize" value="8" step="0.5" onchange="renderAllPreviews()" class="w-full p-2 border rounded font-semibold text-center">
+                </div>
+                <div>
+                  <label class="text-gray-600 block mb-1">Висота штрихкоду (мм):</label>
+                  <input type="number" id="cfgBarcodeHeight" value="11" step="0.5" onchange="renderAllPreviews()" class="w-full p-2 border rounded font-semibold text-center">
+                </div>
               </div>
             </div>
+
+            <!-- Settings for Store Tags Mode -->
+            <div id="settingsBoxTags" class="hidden">
+              <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3 flex items-center justify-between">
+                <span>Параметри цінника магазину</span>
+                <span class="text-xs font-normal text-gray-500">Формати А4 / А6</span>
+              </h3>
+              <div class="space-y-3 text-xs">
+                <div>
+                  <label class="text-gray-700 font-medium block mb-1">Шаблон розкладки для друку:</label>
+                  <select id="cfgTagLayout" onchange="renderAllPreviews()" class="w-full p-2 border border-gray-300 rounded font-medium text-xs">
+                    <option value="3_col">А4: 3 цінники в ряд (Класичний формат GT Racer)</option>
+                    <option value="6_grid">А4: 6 цінників на аркуш (Сітка 3 × 2)</option>
+                    <option value="single_a6">А6: 1 великий цінник на сторінку (Шоурум)</option>
+                  </select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="text-gray-600 block mb-1">Акційна знижка за замовчуванням (%):</label>
+                    <input type="number" id="cfgPromoDiscountPct" value="15" step="5" onchange="applyPromoDiscountToAll()" class="w-full p-2 border rounded font-semibold text-center">
+                  </div>
+                  <div>
+                    <label class="text-gray-600 block mb-1">Показувати QR-код сайту:</label>
+                    <select id="cfgShowQr" onchange="renderAllPreviews()" class="w-full p-2 border rounded text-xs font-medium">
+                      <option value="yes">Так (QR на gtracer.com.ua)</option>
+                      <option value="no">Ні</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
-        <!-- Right Column: Queue & Print Actions (7 cols) -->
+        <!-- Right Column: Queue, Preview & Actions (7 cols) -->
         <div class="lg:col-span-7 space-y-6">
 
           <!-- Action & Counters Card -->
@@ -261,25 +491,25 @@ GT Racer X-5993 Black	2
                 <div id="statUniqueCount" class="text-2xl font-black text-gray-900 mt-1">0</div>
               </div>
               <div class="bg-red-50 p-3 rounded-lg border border-red-100">
-                <div class="text-xs text-red-600 font-medium">Всього етикеток</div>
-                <div id="statTotalLabels" class="text-2xl font-black text-red-600 mt-1">0</div>
+                <div id="statTotalTitle" class="text-xs text-red-600 font-medium">Всього до друку</div>
+                <div id="statTotalItems" class="text-2xl font-black text-red-600 mt-1">0</div>
               </div>
               <div class="bg-green-50 p-3 rounded-lg border border-green-100">
-                <div class="text-xs text-green-700 font-medium">Зі штрихкодами</div>
-                <div id="statBarcodeMatch" class="text-2xl font-black text-green-700 mt-1">0%</div>
+                <div class="text-xs text-green-700 font-medium">Знайдено в базі</div>
+                <div id="statMatchPct" class="text-2xl font-black text-green-700 mt-1">0%</div>
               </div>
             </div>
 
-            <!-- Main Print Action Buttons -->
+            <!-- Print Actions Buttons -->
             <div class="flex flex-col sm:flex-row gap-3">
-              <button onclick="triggerDirectPrint()" class="flex-1 py-3 px-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 text-base">
+              <button onclick="triggerPrint()" id="btnPrintMain" class="flex-1 py-3 px-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 text-base">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                Друкувати на термопринтері
+                <span>Друкувати на термопринтері</span>
               </button>
               
-              <button onclick="downloadExactPdf()" class="py-3 px-5 bg-gray-900 hover:bg-black text-white font-semibold rounded-lg shadow transition flex items-center justify-center gap-2 text-sm">
+              <button onclick="downloadPdf()" id="btnDownloadPdf" class="py-3 px-5 bg-gray-900 hover:bg-black text-white font-semibold rounded-lg shadow transition flex items-center justify-center gap-2 text-sm">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                Завантажити PDF (47×24 мм)
+                <span>Завантажити PDF</span>
               </button>
             </div>
           </div>
@@ -288,34 +518,34 @@ GT Racer X-5993 Black	2
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
             <div class="flex items-center justify-between mb-4">
               <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider flex items-center gap-2">
-                <span>Попередній перегляд етикетки</span>
-                <span class="text-xs text-gray-400 font-normal">(Масштаб 1:1 та збільшений)</span>
+                <span id="previewSectionTitle">Попередній перегляд етикетки</span>
+                <span class="text-xs text-gray-400 font-normal">(Інтерактивне прев'ю)</span>
               </h3>
               <div class="flex items-center gap-2">
                 <button onclick="prevPreviewPage()" class="p-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-700">◀</button>
                 <span id="previewPagination" class="text-xs font-medium text-gray-600">0 з 0</span>
                 <button onclick="nextPreviewPage()" class="p-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-700">▶</button>
-                <button onclick="toggleGridPreview()" id="btnToggleGrid" class="text-xs text-blue-600 hover:underline ml-2">Показати всі сіткою</button>
+                <button onclick="toggleGridPreview()" id="btnToggleGrid" class="text-xs text-blue-600 hover:underline ml-2">Показати сіткою</button>
               </div>
             </div>
 
-            <!-- Single preview box -->
-            <div id="singlePreviewContainer" class="p-6 bg-gray-100 rounded-xl flex items-center justify-center border border-gray-200 min-h-[160px]">
+            <!-- Single Preview Container -->
+            <div id="singlePreviewContainer" class="p-6 bg-gray-100 rounded-xl flex items-center justify-center border border-gray-200 min-h-[170px]">
               <div id="activePreviewWrapper">
                 <div class="text-xs text-gray-400">Додайте позиції для попереднього перегляду</div>
               </div>
             </div>
 
-            <!-- Grid Preview Box (Hidden by default) -->
-            <div id="gridPreviewContainer" class="p-4 bg-gray-100 rounded-xl border border-gray-200 max-h-96 overflow-y-auto hidden">
-              <div id="gridPreviewList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 justify-items-center"></div>
+            <!-- Grid Preview Container (Hidden by default) -->
+            <div id="gridPreviewContainer" class="p-4 bg-gray-100 rounded-xl border border-gray-200 max-h-[500px] overflow-y-auto hidden">
+              <div id="gridPreviewList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-items-center"></div>
             </div>
           </div>
 
           <!-- Items Table -->
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="px-5 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 class="text-sm font-bold text-gray-800">Список позицій до друку</h3>
+              <h3 class="text-sm font-bold text-gray-800">Список товарів у черзі</h3>
               <div class="flex gap-2">
                 <button onclick="exportTableToExcel()" class="text-xs text-gray-600 hover:text-gray-900 border border-gray-300 rounded px-2.5 py-1 bg-white hover:bg-gray-50 transition">
                   Експорт в Excel
@@ -331,15 +561,16 @@ GT Racer X-5993 Black	2
                 <thead class="bg-gray-50 text-gray-500 font-semibold sticky top-0 z-10">
                   <tr>
                     <th class="px-3 py-2 text-left w-10">№</th>
-                    <th class="px-4 py-2 text-left">Товар та Колір</th>
-                    <th class="px-4 py-2 text-left w-36">Штрихкод</th>
-                    <th class="px-4 py-2 text-center w-28">Кількість</th>
-                    <th class="px-3 py-2 text-center w-12">Дія</th>
+                    <th class="px-4 py-2 text-left">Товар</th>
+                    <th class="px-3 py-2 text-left w-32">Штрихкод</th>
+                    <th class="px-3 py-2 text-center w-28">Ціна (Нова / Стара)</th>
+                    <th class="px-3 py-2 text-center w-24">Кількість</th>
+                    <th class="px-2 py-2 text-center w-10">Дія</th>
                   </tr>
                 </thead>
                 <tbody id="itemsTableBody" class="divide-y divide-gray-200 bg-white">
                   <tr>
-                    <td colspan="5" class="px-4 py-8 text-center text-gray-400">Список порожній. Вставте дані або завантажте файл зліва.</td>
+                    <td colspan="6" class="px-4 py-8 text-center text-gray-400">Список порожній. Вставте дані зліва.</td>
                   </tr>
                 </tbody>
               </table>
@@ -351,17 +582,30 @@ GT Racer X-5993 Black	2
     </main>
   </div>
 
-  <!-- Hidden Print Container: Only rendered during window.print() -->
-  <div id="printContainer"></div>
+  <!-- Print Containers: Handled automatically during window.print() -->
+  <div id="printContainerLabels"></div>
+  <div id="printContainerTags"></div>
 
   <script>
-    // Global State
+    // Application State
+    let currentMode = 'labels'; // 'labels' (47x24mm) or 'tags' (Store A4 price tags)
     let catalog = [];
-    let items = []; // { id, name, barcode, quantity }
+    let items = []; // { id, name, barcode, price_rt, price_old, quantity }
     let currentPreviewIndex = 0;
     let isGridView = false;
 
-    // Initialize Database
+    // Category URL mapping for QR Codes
+    const CATEGORY_PREFIX_MAP = {
+      'офісні крісла': 'ofisnoe-kreslo-',
+      'дитячі крісла': 'detskoe-kreslo-',
+      'геймерські крісла': 'gejmerskoe-kreslo-',
+      'геймерские кресла': 'gejmerskoe-kreslo-',
+      'комп\'ютерні столи': 'gejmerskij-kompjuternyj-stol-',
+      'столи': 'stol-',
+      'стільці': 'stul-',
+      'кухонні столи': 'kuhonnyj-stol-'
+    };
+
     window.addEventListener('DOMContentLoaded', () => {
       if (window.PRELOADED_PRODUCTS && window.PRELOADED_PRODUCTS.length > 0) {
         catalog = window.PRELOADED_PRODUCTS;
@@ -373,14 +617,49 @@ GT Racer X-5993 Black	2
             catalog = data;
             updateDbBadge(catalog.length);
           })
-          .catch(err => {
-            console.warn('Could not load products.json directly, fallback to empty catalog', err);
-          });
+          .catch(err => console.warn('Fallback catalog', err));
       }
     });
 
     function updateDbBadge(count) {
       document.getElementById('dbCountText').textContent = `База: ${count} товарів`;
+    }
+
+    // Mode Switcher: Labels (47x24) vs Store Price Tags (A4)
+    function switchAppMode(mode) {
+      currentMode = mode;
+      document.body.className = (mode === 'labels' ? 'mode-labels' : 'mode-tags') + ' bg-gray-100 text-gray-800 font-sans min-h-screen';
+
+      const btnLabels = document.getElementById('modeBtnLabels');
+      const btnTags = document.getElementById('modeBtnTags');
+      const badge = document.getElementById('activeModeBadge');
+      const settingsLabels = document.getElementById('settingsBoxLabels');
+      const settingsTags = document.getElementById('settingsBoxTags');
+      const btnPrintMain = document.getElementById('btnPrintMain');
+      const btnDownloadPdf = document.getElementById('btnDownloadPdf');
+      const previewTitle = document.getElementById('previewSectionTitle');
+
+      if (mode === 'labels') {
+        btnLabels.className = 'py-1.5 px-3.5 rounded-lg bg-red-600 text-white shadow flex items-center gap-1.5 transition';
+        btnTags.className = 'py-1.5 px-3.5 rounded-lg text-gray-400 hover:text-white flex items-center gap-1.5 transition';
+        badge.textContent = 'Етикетки (47×24 мм)';
+        settingsLabels.classList.remove('hidden');
+        settingsTags.classList.add('hidden');
+        btnPrintMain.querySelector('span').textContent = 'Друкувати на термопринтері (47×24 мм)';
+        btnDownloadPdf.querySelector('span').textContent = 'Завантажити PDF (47×24 мм)';
+        previewTitle.textContent = 'Попередній перегляд етикетки (47×24 мм)';
+      } else {
+        btnTags.className = 'py-1.5 px-3.5 rounded-lg bg-red-600 text-white shadow flex items-center gap-1.5 transition';
+        btnLabels.className = 'py-1.5 px-3.5 rounded-lg text-gray-400 hover:text-white flex items-center gap-1.5 transition';
+        badge.textContent = 'Цінники для магазину (А4 / А6)';
+        settingsLabels.classList.add('hidden');
+        settingsTags.classList.remove('hidden');
+        btnPrintMain.querySelector('span').textContent = 'Друкувати Цінники на А4';
+        btnDownloadPdf.querySelector('span').textContent = 'Завантажити Цінники PDF (А4)';
+        previewTitle.textContent = 'Попередній перегляд цінника для магазину';
+      }
+
+      renderAllPreviews();
     }
 
     // Google Sheets Sync
@@ -393,12 +672,11 @@ GT Racer X-5993 Black	2
       const sheetUrl = 'https://docs.google.com/spreadsheets/d/1MNH6OVkDvcHcx0B33mcuBZMMvDYU4cgI/export?format=csv&gid=1259178503';
       try {
         const resp = await fetch(sheetUrl);
-        if (!resp.ok) throw new Error('Network response was not ok');
+        if (!resp.ok) throw new Error('Direct fetch failed');
         const csvText = await resp.text();
         parseCsvCatalog(csvText);
         alert(`Базу успішно оновлено! Завантажено ${catalog.length} товарів з Google Таблиці.`);
       } catch (e) {
-        console.error('Direct fetch failed, trying proxy...', e);
         try {
           const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(sheetUrl);
           const resp2 = await fetch(proxyUrl);
@@ -406,7 +684,7 @@ GT Racer X-5993 Black	2
           parseCsvCatalog(csvText2);
           alert(`Базу успішно оновлено через проксі! Завантажено ${catalog.length} товарів.`);
         } catch (err2) {
-          alert('Не вдалося оновити з Google Sheets напряму (CORS). Використовується збережена локальна база.');
+          alert('Не вдалося оновити з Google Sheets напряму через обмеження браузера (CORS). Використовується вбудована база.');
         }
       } finally {
         btn.innerHTML = originalText;
@@ -437,13 +715,12 @@ GT Racer X-5993 Black	2
       if (newCatalog.length > 0) {
         catalog = newCatalog;
         updateDbBadge(catalog.length);
-        // Re-match any existing items without barcodes
         rematchBarcodes();
       }
     }
 
     function parseCsvLine(text) {
-      let p = '', row = [''], inQuotes = false;
+      let row = [''], inQuotes = false;
       for (let i = 0; i < text.length; i++) {
         let c = text[i];
         if (c === '"') {
@@ -457,24 +734,20 @@ GT Racer X-5993 Black	2
       return row;
     }
 
-    // Tab Switching
+    // Input Tabs
     function switchTab(tab) {
       ['text', 'file', 'search'].forEach(t => {
         document.getElementById('tabContent' + capitalize(t)).classList.add('hidden');
-        document.getElementById('tabBtn' + capitalize(t)).classList.remove('border-red-600', 'text-red-600', 'font-semibold', 'bg-white');
-        document.getElementById('tabBtn' + capitalize(t)).classList.add('border-transparent', 'text-gray-500');
+        document.getElementById('tabBtn' + capitalize(t)).className = 'flex-1 py-3 px-3 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 flex items-center justify-center gap-1.5';
       });
-
       document.getElementById('tabContent' + capitalize(tab)).classList.remove('hidden');
-      document.getElementById('tabBtn' + capitalize(tab)).classList.add('border-red-600', 'text-red-600', 'font-semibold', 'bg-white');
-      document.getElementById('tabBtn' + capitalize(tab)).classList.remove('border-transparent', 'text-gray-500');
+      document.getElementById('tabBtn' + capitalize(tab)).className = 'flex-1 py-3 px-3 text-center border-b-2 border-red-600 text-red-600 font-bold bg-white flex items-center justify-center gap-1.5';
     }
 
     function capitalize(s) {
       return s.charAt(0).toUpperCase() + s.slice(1);
     }
 
-    // Sample Data Loader
     function loadSampleData() {
       const sample = `Сирець\tGT Racer X-2339 Fabric Black/Gray\t2
 Сирець\tGT Racer X-2729 Fabric Black\t1
@@ -492,11 +765,11 @@ GT Racer X-5993 Black	2
       document.getElementById('rawInputText').value = sample;
     }
 
-    // Process Text Input with Auto-Detection & Deduplication
+    // Process Text & Deduplicate
     function processTextInput() {
       const text = document.getElementById('rawInputText').value.trim();
       if (!text) {
-        alert('Будь ласка, вставте текст або скопійовані дані з Excel.');
+        alert('Будь ласка, вставте текст або скопійовані рядки з Excel.');
         return;
       }
 
@@ -507,8 +780,6 @@ GT Racer X-5993 Black	2
       for (let rawLine of lines) {
         let line = rawLine.trim();
         if (!line) continue;
-
-        // Skip obvious header lines
         if (line.includes('Накладная') || line.includes('Розетка') || line.includes('Экспедитор') || (line.includes('название') && line.includes('кол'))) {
           continue;
         }
@@ -522,12 +793,10 @@ GT Racer X-5993 Black	2
         let nameCand = null;
         let qtyCand = 1;
 
-        // Find candidate for name
         for (let i = 0; i < parts.length; i++) {
           let p = parts[i];
           if (/gt racer/i.test(p) || findProductInCatalog(p)) {
             nameCand = p;
-            // Next numeric token is likely quantity
             for (let j = i + 1; j < parts.length; j++) {
               if (/^\d+$/.test(parts[j])) {
                 qtyCand = parseInt(parts[j], 10);
@@ -538,7 +807,6 @@ GT Racer X-5993 Black	2
           }
         }
 
-        // Fallback: look for text and trailing number
         if (!nameCand) {
           for (let p of parts) {
             if (p.length > 5 && !/^\d+$/.test(p) && !['сирець', 'бровари', 'петрівці'].includes(p.toLowerCase())) {
@@ -556,9 +824,11 @@ GT Racer X-5993 Black	2
 
         if (nameCand) {
           let normKey = nameCand.toLowerCase().replace(/\s+/g, ' ').trim();
-          let matchedProd = findProductInCatalog(nameCand);
-          let barcode = matchedProd ? matchedProd.barcode : '';
-          let displayName = matchedProd ? matchedProd.name : nameCand;
+          let matched = findProductInCatalog(nameCand);
+          let barcode = matched ? matched.barcode : '';
+          let displayName = matched ? matched.name : nameCand;
+          let priceRt = matched && matched.price_rt ? parseFloat(matched.price_rt) : 0;
+          let priceOld = priceRt > 0 ? Math.round(priceRt * 1.15) : 0;
 
           if (autoSum && newItemsMap[normKey]) {
             newItemsMap[normKey].quantity += qtyCand;
@@ -567,13 +837,14 @@ GT Racer X-5993 Black	2
               id: Date.now() + Math.random().toString(36).substr(2, 9),
               name: displayName,
               barcode: barcode,
+              price_rt: priceRt,
+              price_old: priceOld,
               quantity: qtyCand
             };
           }
         }
       }
 
-      // Merge into global items list
       for (let k in newItemsMap) {
         let entry = newItemsMap[k];
         let existing = items.find(it => it.name.toLowerCase() === entry.name.toLowerCase());
@@ -588,31 +859,26 @@ GT Racer X-5993 Black	2
       updateTableAndPreviews();
     }
 
-    // Match product in catalog
     function findProductInCatalog(query) {
       if (!query || catalog.length === 0) return null;
       let q = query.toLowerCase().replace(/['"«»]/g, '').trim();
-      
-      // 1. Exact match by full name
+
       let found = catalog.find(p => p.name.toLowerCase() === q);
       if (found) return found;
 
-      // 2. Contains match
       found = catalog.find(p => p.name.toLowerCase().includes(q) || q.includes(p.name.toLowerCase()));
       if (found) return found;
 
-      // 3. Match by model & color
       for (let p of catalog) {
         if (p.model && p.color) {
           let pattern = (p.model + ' ' + p.color).toLowerCase();
           if (q.includes(pattern)) return p;
         }
       }
-
       return null;
     }
 
-    // File Upload Handler (Excel / CSV)
+    // Excel File Upload
     function handleFileUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -625,30 +891,11 @@ GT Racer X-5993 Black	2
         try {
           const data = new Uint8Array(evt.target.result);
           const workbook = XLSX.read(data, { type: 'array' });
-          const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-          const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
           let autoSum = document.getElementById('chkAutoSum').checked;
           let addedCount = 0;
-
-          // Find header columns if present
-          let nameColIdx = -1;
-          let qtyColIdx = -1;
-
-          for (let r = 0; r < Math.min(15, rows.length); r++) {
-            let row = rows[r];
-            if (!Array.isArray(row)) continue;
-            for (let c = 0; c < row.length; c++) {
-              let val = String(row[c] || '').toLowerCase();
-              if (val.includes('назва') || val.includes('название') || val.includes('товар') || val.includes('name')) {
-                nameColIdx = c;
-              }
-              if (val.includes('кол') || val.includes('к-сть') || val.includes('qty') || val.includes('кількість')) {
-                qtyColIdx = c;
-              }
-            }
-            if (nameColIdx !== -1 && qtyColIdx !== -1) break;
-          }
 
           for (let r = 0; r < rows.length; r++) {
             let row = rows[r];
@@ -657,27 +904,18 @@ GT Racer X-5993 Black	2
             let name = '';
             let qty = 1;
 
-            if (nameColIdx !== -1 && row[nameColIdx]) {
-              name = String(row[nameColIdx]).trim();
-              if (qtyColIdx !== -1 && row[qtyColIdx]) {
-                let parsedQty = parseInt(row[qtyColIdx], 10);
-                if (!isNaN(parsedQty)) qty = parsedQty;
-              }
-            } else {
-              // Heuristic scanning
-              for (let c = 0; c < row.length; c++) {
-                let cell = String(row[c] || '').trim();
-                if (/gt racer/i.test(cell) || findProductInCatalog(cell)) {
-                  name = cell;
-                  for (let nc = c + 1; nc < row.length; nc++) {
-                    let nextVal = parseInt(row[nc], 10);
-                    if (!isNaN(nextVal) && nextVal > 0) {
-                      qty = nextVal;
-                      break;
-                    }
+            for (let c = 0; c < row.length; c++) {
+              let cell = String(row[c] || '').trim();
+              if (/gt racer/i.test(cell) || findProductInCatalog(cell)) {
+                name = cell;
+                for (let nc = c + 1; nc < row.length; nc++) {
+                  let val = parseInt(row[nc], 10);
+                  if (!isNaN(val) && val > 0) {
+                    qty = val;
+                    break;
                   }
-                  break;
                 }
+                break;
               }
             }
 
@@ -685,6 +923,8 @@ GT Racer X-5993 Black	2
               let matched = findProductInCatalog(name);
               let barcode = matched ? matched.barcode : '';
               let displayName = matched ? matched.name : name;
+              let priceRt = matched && matched.price_rt ? parseFloat(matched.price_rt) : 0;
+              let priceOld = priceRt > 0 ? Math.round(priceRt * 1.15) : 0;
 
               let existing = items.find(it => it.name.toLowerCase() === displayName.toLowerCase());
               if (autoSum && existing) {
@@ -694,6 +934,8 @@ GT Racer X-5993 Black	2
                   id: Date.now() + Math.random().toString(36).substr(2, 9),
                   name: displayName,
                   barcode: barcode,
+                  price_rt: priceRt,
+                  price_old: priceOld,
                   quantity: qty
                 });
               }
@@ -701,14 +943,12 @@ GT Racer X-5993 Black	2
             }
           }
 
-          status.textContent = `Успішно завантажено! Оброблено позицій: ${addedCount}`;
+          status.textContent = `Успішно завантажено позицій: ${addedCount}`;
           updateTableAndPreviews();
         } catch (err) {
-          console.error(err);
-          status.textContent = `Помилка читання Excel файлу: ${err.message}`;
+          status.textContent = `Помилка: ${err.message}`;
         }
       };
-
       reader.readAsArrayBuffer(file);
     }
 
@@ -730,12 +970,12 @@ GT Racer X-5993 Black	2
       }
 
       resultsDiv.innerHTML = filtered.map(p => `
-        <div onclick="selectCatalogItem('${p.barcode}')" class="p-2 hover:bg-gray-100 cursor-pointer text-xs flex justify-between items-center">
+        <div onclick="selectCatalogItem('${p.barcode}')" class="p-2.5 hover:bg-gray-100 cursor-pointer text-xs flex justify-between items-center transition">
           <div>
-            <span class="font-semibold text-gray-900">${p.name}</span>
+            <span class="font-bold text-gray-900">${p.name}</span>
             <span class="text-gray-500 ml-2 font-mono text-[11px]">${p.barcode}</span>
           </div>
-          <span class="text-xs text-red-600 font-medium">${p.price_rt ? p.price_rt + ' грн' : ''}</span>
+          <span class="text-xs text-red-600 font-bold">${p.price_rt ? p.price_rt + ' грн' : ''}</span>
         </div>
       `).join('');
       resultsDiv.classList.remove('hidden');
@@ -745,6 +985,9 @@ GT Racer X-5993 Black	2
       selectedCatalogItem = catalog.find(p => p.barcode === barcode);
       if (selectedCatalogItem) {
         document.getElementById('catalogSearchInput').value = selectedCatalogItem.name;
+        if (selectedCatalogItem.price_rt) {
+          document.getElementById('catalogItemPrice').value = selectedCatalogItem.price_rt;
+        }
         document.getElementById('catalogSearchResults').classList.add('hidden');
       }
     }
@@ -753,7 +996,7 @@ GT Racer X-5993 Black	2
       if (!selectedCatalogItem) {
         const query = document.getElementById('catalogSearchInput').value.trim();
         if (query) {
-          selectedCatalogItem = findProductInCatalog(query) || { name: query, barcode: '' };
+          selectedCatalogItem = findProductInCatalog(query) || { name: query, barcode: '', price_rt: 0 };
         } else {
           alert('Будь ласка, оберіть товар зі списку.');
           return;
@@ -761,38 +1004,56 @@ GT Racer X-5993 Black	2
       }
 
       const qty = parseInt(document.getElementById('catalogItemQty').value, 10) || 1;
+      const customPrice = parseFloat(document.getElementById('catalogItemPrice').value) || parseFloat(selectedCatalogItem.price_rt) || 0;
       const autoSum = document.getElementById('chkAutoSum').checked;
 
       let existing = items.find(it => it.name.toLowerCase() === selectedCatalogItem.name.toLowerCase());
       if (autoSum && existing) {
         existing.quantity += qty;
+        if (customPrice > 0) existing.price_rt = customPrice;
       } else {
         items.push({
           id: Date.now() + Math.random().toString(36).substr(2, 9),
           name: selectedCatalogItem.name,
           barcode: selectedCatalogItem.barcode || '',
+          price_rt: customPrice,
+          price_old: customPrice > 0 ? Math.round(customPrice * 1.15) : 0,
           quantity: qty
         });
       }
 
       document.getElementById('catalogSearchInput').value = '';
+      document.getElementById('catalogItemPrice').value = '';
       document.getElementById('catalogItemQty').value = '1';
       selectedCatalogItem = null;
       updateTableAndPreviews();
     }
 
-    // Rematch barcodes if database updated
     function rematchBarcodes() {
       items.forEach(it => {
-        if (!it.barcode) {
-          let found = findProductInCatalog(it.name);
-          if (found) it.barcode = found.barcode;
+        let found = findProductInCatalog(it.name);
+        if (found) {
+          if (!it.barcode) it.barcode = found.barcode;
+          if (!it.price_rt && found.price_rt) {
+            it.price_rt = parseFloat(found.price_rt);
+            it.price_old = Math.round(it.price_rt * 1.15);
+          }
         }
       });
       updateTableAndPreviews();
     }
 
-    // Table & Preview Rendering
+    function applyPromoDiscountToAll() {
+      const pct = parseFloat(document.getElementById('cfgPromoDiscountPct').value) || 15;
+      items.forEach(it => {
+        if (it.price_rt > 0) {
+          it.price_old = Math.round(it.price_rt * (1 + pct / 100));
+        }
+      });
+      updateTableAndPreviews();
+    }
+
+    // Table & Preview Updates
     function updateTableAndPreviews() {
       renderTable();
       renderAllPreviews();
@@ -801,19 +1062,19 @@ GT Racer X-5993 Black	2
 
     function updateStats() {
       const uniqueCount = items.length;
-      const totalLabels = items.reduce((acc, it) => acc + (parseInt(it.quantity, 10) || 0), 0);
+      const totalUnits = items.reduce((acc, it) => acc + (parseInt(it.quantity, 10) || 0), 0);
       const withBarcode = items.filter(it => it.barcode && it.barcode.length >= 12).length;
       const matchPct = uniqueCount > 0 ? Math.round((withBarcode / uniqueCount) * 100) : 0;
 
       document.getElementById('statUniqueCount').textContent = uniqueCount;
-      document.getElementById('statTotalLabels').textContent = totalLabels;
-      document.getElementById('statBarcodeMatch').textContent = matchPct + '%';
+      document.getElementById('statTotalItems').textContent = totalUnits;
+      document.getElementById('statMatchPct').textContent = matchPct + '%';
     }
 
     function renderTable() {
       const tbody = document.getElementById('itemsTableBody');
       if (items.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-gray-400">Список порожній. Вставте дані або завантажте файл зліва.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-gray-400">Список порожній. Вставте дані або завантажте файл зліва.</td></tr>`;
         return;
       }
 
@@ -823,19 +1084,25 @@ GT Racer X-5993 Black	2
           <tr class="hover:bg-gray-50 transition">
             <td class="px-3 py-2 text-gray-400 font-mono">${idx + 1}</td>
             <td class="px-4 py-2">
-              <div class="font-medium text-gray-900">${escapeHtml(it.name)}</div>
+              <div class="font-semibold text-gray-900">${escapeHtml(it.name)}</div>
             </td>
-            <td class="px-4 py-2">
-              <input type="text" value="${escapeHtml(it.barcode || '')}" onchange="updateItemBarcode('${it.id}', this.value)" class="w-full font-mono text-xs p-1 border rounded ${hasBarcode ? 'border-gray-300' : 'border-red-400 bg-red-50 text-red-600'}" placeholder="Введіть EAN-13">
+            <td class="px-3 py-2">
+              <input type="text" value="${escapeHtml(it.barcode || '')}" onchange="updateItemBarcode('${it.id}', this.value)" class="w-full font-mono text-xs p-1 border rounded ${hasBarcode ? 'border-gray-300' : 'border-red-400 bg-red-50 text-red-600'}" placeholder="EAN-13">
             </td>
-            <td class="px-4 py-2 text-center">
-              <div class="inline-flex items-center border rounded overflow-hidden">
-                <button onclick="changeQty('${it.id}', -1)" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold">-</button>
-                <input type="number" min="1" value="${it.quantity}" onchange="updateItemQty('${it.id}', this.value)" class="w-12 text-center text-xs p-1 border-0 font-bold">
-                <button onclick="changeQty('${it.id}', 1)" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold">+</button>
+            <td class="px-3 py-2 text-center">
+              <div class="flex items-center justify-center gap-1">
+                <input type="number" value="${it.price_rt || ''}" onchange="updateItemPrice('${it.id}', this.value)" placeholder="Ціна" class="w-16 text-center text-xs p-1 border rounded font-bold text-red-600" title="Нова ціна">
+                <input type="number" value="${it.price_old || ''}" onchange="updateItemOldPrice('${it.id}', this.value)" placeholder="Стара" class="w-14 text-center text-xs p-1 border rounded text-gray-400 line-through" title="Стара ціна">
               </div>
             </td>
             <td class="px-3 py-2 text-center">
+              <div class="inline-flex items-center border rounded overflow-hidden">
+                <button onclick="changeQty('${it.id}', -1)" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold">-</button>
+                <input type="number" min="1" value="${it.quantity}" onchange="updateItemQty('${it.id}', this.value)" class="w-10 text-center text-xs p-1 border-0 font-bold">
+                <button onclick="changeQty('${it.id}', 1)" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold">+</button>
+              </div>
+            </td>
+            <td class="px-2 py-2 text-center">
               <button onclick="deleteItem('${it.id}')" class="text-gray-400 hover:text-red-600 transition p-1">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
               </button>
@@ -874,6 +1141,22 @@ GT Racer X-5993 Black	2
       }
     }
 
+    function updateItemPrice(id, val) {
+      let item = items.find(it => it.id === id);
+      if (item) {
+        item.price_rt = parseFloat(val) || 0;
+        updateTableAndPreviews();
+      }
+    }
+
+    function updateItemOldPrice(id, val) {
+      let item = items.find(it => it.id === id);
+      if (item) {
+        item.price_old = parseFloat(val) || 0;
+        updateTableAndPreviews();
+      }
+    }
+
     function deleteItem(id) {
       items = items.filter(it => it.id !== id);
       if (currentPreviewIndex >= items.length) {
@@ -891,7 +1174,6 @@ GT Racer X-5993 Black	2
       }
     }
 
-    // Export Table to Excel
     function exportTableToExcel() {
       if (items.length === 0) {
         alert('Немає позицій для експорту.');
@@ -901,15 +1183,17 @@ GT Racer X-5993 Black	2
         '№': idx + 1,
         'Назва товару': it.name,
         'Штрихкод (EAN-13)': it.barcode,
+        'Ціна роздрібна (грн)': it.price_rt,
+        'Ціна стара (грн)': it.price_old,
         'Кількість (шт)': it.quantity
       }));
       const ws = XLSX.utils.json_to_sheet(data);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Етикетки');
-      XLSX.writeFile(wb, 'GT_Racer_Етикетки_' + new Date().toISOString().slice(0, 10) + '.xlsx');
+      XLSX.utils.book_append_sheet(wb, ws, 'Товари');
+      XLSX.writeFile(wb, 'GT_Racer_Список_' + new Date().toISOString().slice(0, 10) + '.xlsx');
     }
 
-    // Smart Title Splitting for Label
+    // Helper: Split title for thermal label
     function splitTitleForLabel(title) {
       title = (title || '').trim();
       if (title.length <= 24) return [title];
@@ -930,57 +1214,20 @@ GT Racer X-5993 Black	2
       return [title];
     }
 
-    // Render Live Previews (Single & Grid)
-    function renderAllPreviews() {
-      const container = document.getElementById('activePreviewWrapper');
-      const gridContainer = document.getElementById('gridPreviewList');
-
-      // Expand items by quantity for true preview list
-      const expandedLabels = [];
-      items.forEach(it => {
-        let q = parseInt(it.quantity, 10) || 1;
-        for (let i = 0; i < q; i++) {
-          expandedLabels.push(it);
-        }
-      });
-
-      const totalExpanded = expandedLabels.length;
-      document.getElementById('previewPagination').textContent = totalExpanded > 0 
-        ? `${currentPreviewIndex + 1} з ${totalExpanded}` 
-        : '0 з 0';
-
-      if (totalExpanded === 0) {
-        container.innerHTML = `<div class="text-xs text-gray-400">Додайте позиції для попереднього перегляду</div>`;
-        gridContainer.innerHTML = '';
-        return;
-      }
-
-      if (currentPreviewIndex >= totalExpanded) {
-        currentPreviewIndex = 0;
-      }
-
-      // Render Single Active Label Preview (Enlarged 2x for clarity)
-      const currentItem = expandedLabels[currentPreviewIndex];
-      container.innerHTML = '';
-      const previewCard = createLabelElement(currentItem, false, 1.8);
-      container.appendChild(previewCard);
-
-      // Render Grid View if toggled
-      if (isGridView) {
-        gridContainer.innerHTML = '';
-        expandedLabels.forEach((it, idx) => {
-          let wrapper = document.createElement('div');
-          wrapper.className = 'flex flex-col items-center';
-          wrapper.appendChild(createLabelElement(it, false, 1.0));
-          let caption = document.createElement('div');
-          caption.className = 'text-[10px] text-gray-500 mt-1 font-mono';
-          caption.textContent = `#${idx + 1} — ${it.name}`;
-          wrapper.appendChild(caption);
-          gridContainer.appendChild(wrapper);
-        });
-      }
+    // Helper: Build product URL on gtracer.com.ua
+    function getProductWebsiteUrl(name, category) {
+      let slug = (name || '').toLowerCase()
+        .replace('/', '-')
+        .replace(/[^a-z0-9\-а-яіїєґ]/gi, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+      
+      let cat = (category || '').toLowerCase().trim();
+      let prefix = CATEGORY_PREFIX_MAP[cat] || 'gejmerskoe-kreslo-';
+      return `https://gtracer.com.ua/${prefix}${slug}`;
     }
 
+    // Create Label Element (Mode 1: 47x24mm)
     function createLabelElement(item, forPrint = false, scale = 1.0) {
       const widthMm = parseFloat(document.getElementById('cfgWidthMm').value) || 47;
       const heightMm = parseFloat(document.getElementById('cfgHeightMm').value) || 24;
@@ -994,11 +1241,9 @@ GT Racer X-5993 Black	2
         card.style.transform = `scale(${scale})`;
       }
 
-      // Exact pixel/mm style for print precision
       card.style.width = widthMm + 'mm';
       card.style.height = heightMm + 'mm';
 
-      // Lines of text
       const lines = splitTitleForLabel(item.name);
       const titleBox = document.createElement('div');
       titleBox.className = 'label-title';
@@ -1011,12 +1256,10 @@ GT Racer X-5993 Black	2
       });
       card.appendChild(titleBox);
 
-      // Barcode Element
       const barcodeSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       barcodeSvg.className = 'barcode-svg';
       barcodeSvg.style.height = barcodeHeightMm + 'mm';
 
-      // Check if valid barcode
       let cleanDigits = (item.barcode || '').replace(/\D/g, '');
       if (cleanDigits.length === 12 || cleanDigits.length === 13) {
         try {
@@ -1032,33 +1275,177 @@ GT Racer X-5993 Black	2
           });
           card.appendChild(barcodeSvg);
         } catch (e) {
-          console.warn('Barcode render error:', e);
           let errBox = document.createElement('div');
           errBox.className = 'text-[9px] text-red-500 font-mono mt-2';
-          errBox.textContent = `Помилка EAN-13: ${cleanDigits}`;
+          errBox.textContent = `EAN-13: ${cleanDigits}`;
           card.appendChild(errBox);
         }
       } else {
         let noCodeBox = document.createElement('div');
         noCodeBox.className = 'text-[9px] text-amber-600 font-mono mt-3 border border-dashed border-amber-300 p-1 rounded';
-        noCodeBox.textContent = cleanDigits ? `Невірний EAN (${cleanDigits.length} цифр)` : 'Штрихкод відсутній';
+        noCodeBox.textContent = cleanDigits ? `Невірний EAN (${cleanDigits.length})` : 'Штрихкод відсутній';
         card.appendChild(noCodeBox);
       }
 
       return card;
     }
 
+    // Create Store Price Tag Element (Mode 2: In-store A4 Tag)
+    function createStoreTagElement(item, forPrint = false) {
+      const card = document.createElement('div');
+      card.className = 'store-tag-card';
+
+      // Logo
+      const logo = document.createElement('div');
+      logo.className = 'store-tag-logo';
+      logo.innerHTML = 'GT <span>Racer</span>';
+      card.appendChild(logo);
+
+      // Title
+      const title = document.createElement('div');
+      title.className = 'store-tag-title';
+      title.textContent = item.name;
+      card.appendChild(title);
+
+      // Price Block
+      const prices = document.createElement('div');
+      prices.className = 'store-tag-prices';
+
+      const priceVal = item.price_rt || 0;
+      const oldPriceVal = item.price_old || (priceVal > 0 ? Math.round(priceVal * 1.15) : 0);
+
+      if (oldPriceVal > priceVal && oldPriceVal > 0) {
+        const oldP = document.createElement('div');
+        oldP.className = 'store-tag-old-price';
+        oldP.textContent = `${oldPriceVal.toLocaleString()} ₴`;
+        prices.appendChild(oldP);
+      }
+
+      const newP = document.createElement('div');
+      newP.className = 'store-tag-new-price';
+      newP.textContent = priceVal > 0 ? `${priceVal.toLocaleString()} ₴` : 'Ціну уточнюйте';
+      prices.appendChild(newP);
+      card.appendChild(prices);
+
+      // QR Code Box
+      const qrBox = document.createElement('div');
+      qrBox.className = 'store-tag-qr-box';
+
+      const showQr = document.getElementById('cfgShowQr').value === 'yes';
+      if (showQr) {
+        const qrContainer = document.createElement('div');
+        const productUrl = getProductWebsiteUrl(item.name, item.category);
+
+        if (window.QRCode) {
+          new QRCode(qrContainer, {
+            text: productUrl,
+            width: 120,
+            height: 120,
+            colorDark: '#111111',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.M
+          });
+        }
+        qrBox.appendChild(qrContainer);
+
+        const hint = document.createElement('div');
+        hint.className = 'store-tag-scan-hint';
+        hint.textContent = 'Відскануйте для деталей';
+        qrBox.appendChild(hint);
+        card.appendChild(qrBox);
+      }
+
+      // Barcode at bottom
+      const cleanDigits = (item.barcode || '').replace(/\D/g, '');
+      if (cleanDigits.length === 12 || cleanDigits.length === 13) {
+        const bcBox = document.createElement('div');
+        bcBox.className = 'store-tag-barcode';
+        const bcSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        bcSvg.style.width = '160px';
+        bcSvg.style.height = '32px';
+        try {
+          JsBarcode(bcSvg, cleanDigits, {
+            format: 'EAN13',
+            width: 1.2,
+            height: 24,
+            fontSize: 9,
+            margin: 0,
+            displayValue: true
+          });
+          bcBox.appendChild(bcSvg);
+          card.appendChild(bcBox);
+        } catch (e) {}
+      }
+
+      return card;
+    }
+
+    // Render Previews
+    function renderAllPreviews() {
+      const container = document.getElementById('activePreviewWrapper');
+      const gridContainer = document.getElementById('gridPreviewList');
+
+      // Expand items by quantity
+      const expanded = [];
+      items.forEach(it => {
+        let q = parseInt(it.quantity, 10) || 1;
+        for (let i = 0; i < q; i++) {
+          expanded.push(it);
+        }
+      });
+
+      const total = expanded.length;
+      document.getElementById('previewPagination').textContent = total > 0 
+        ? `${currentPreviewIndex + 1} з ${total}` 
+        : '0 з 0';
+
+      if (total === 0) {
+        container.innerHTML = `<div class="text-xs text-gray-400">Додайте позиції для попереднього перегляду</div>`;
+        gridContainer.innerHTML = '';
+        return;
+      }
+
+      if (currentPreviewIndex >= total) currentPreviewIndex = 0;
+
+      container.innerHTML = '';
+      const currentItem = expanded[currentPreviewIndex];
+
+      if (currentMode === 'labels') {
+        container.appendChild(createLabelElement(currentItem, false, 1.8));
+      } else {
+        container.appendChild(createStoreTagElement(currentItem, false));
+      }
+
+      if (isGridView) {
+        gridContainer.innerHTML = '';
+        expanded.forEach((it, idx) => {
+          let wrapper = document.createElement('div');
+          wrapper.className = 'flex flex-col items-center';
+          if (currentMode === 'labels') {
+            wrapper.appendChild(createLabelElement(it, false, 1.0));
+          } else {
+            wrapper.appendChild(createStoreTagElement(it, false));
+          }
+          let caption = document.createElement('div');
+          caption.className = 'text-[10px] text-gray-500 mt-2 font-mono';
+          caption.textContent = `#${idx + 1} — ${it.name}`;
+          wrapper.appendChild(caption);
+          gridContainer.appendChild(wrapper);
+        });
+      }
+    }
+
     function prevPreviewPage() {
-      const totalExpanded = items.reduce((acc, it) => acc + (parseInt(it.quantity, 10) || 0), 0);
-      if (totalExpanded <= 1) return;
-      currentPreviewIndex = (currentPreviewIndex - 1 + totalExpanded) % totalExpanded;
+      const total = items.reduce((acc, it) => acc + (parseInt(it.quantity, 10) || 0), 0);
+      if (total <= 1) return;
+      currentPreviewIndex = (currentPreviewIndex - 1 + total) % total;
       renderAllPreviews();
     }
 
     function nextPreviewPage() {
-      const totalExpanded = items.reduce((acc, it) => acc + (parseInt(it.quantity, 10) || 0), 0);
-      if (totalExpanded <= 1) return;
-      currentPreviewIndex = (currentPreviewIndex + 1) % totalExpanded;
+      const total = items.reduce((acc, it) => acc + (parseInt(it.quantity, 10) || 0), 0);
+      if (total <= 1) return;
+      currentPreviewIndex = (currentPreviewIndex + 1) % total;
       renderAllPreviews();
     }
 
@@ -1071,103 +1458,126 @@ GT Racer X-5993 Black	2
       if (isGridView) {
         grid.classList.remove('hidden');
         single.classList.add('hidden');
-        btn.textContent = 'Показати одну етикетку';
+        btn.textContent = 'Показати один';
       } else {
         grid.classList.add('hidden');
         single.classList.remove('hidden');
-        btn.textContent = 'Показати всі сіткою';
+        btn.textContent = 'Показати сіткою';
       }
       renderAllPreviews();
     }
 
-    // Direct Browser Print (window.print)
-    function triggerDirectPrint() {
+    // Direct Browser Print
+    function triggerPrint() {
       if (items.length === 0) {
         alert('Немає позицій для друку.');
         return;
       }
 
-      const printContainer = document.getElementById('printContainer');
-      printContainer.innerHTML = '';
+      if (currentMode === 'labels') {
+        const printContainer = document.getElementById('printContainerLabels');
+        printContainer.innerHTML = '';
 
-      items.forEach(it => {
-        let q = parseInt(it.quantity, 10) || 1;
-        for (let i = 0; i < q; i++) {
-          printContainer.appendChild(createLabelElement(it, true));
+        items.forEach(it => {
+          let q = parseInt(it.quantity, 10) || 1;
+          for (let i = 0; i < q; i++) {
+            printContainer.appendChild(createLabelElement(it, true));
+          }
+        });
+      } else {
+        const printContainer = document.getElementById('printContainerTags');
+        printContainer.innerHTML = '';
+
+        const layout = document.getElementById('cfgTagLayout').value;
+        const gridBox = document.createElement('div');
+
+        if (layout === '3_col') {
+          gridBox.className = 'tags-print-grid-3';
+        } else if (layout === '6_grid') {
+          gridBox.className = 'tags-print-grid-3';
+        } else {
+          gridBox.className = 'tags-print-single';
         }
-      });
 
-      // Allow DOM to settle and trigger print
+        items.forEach(it => {
+          let q = parseInt(it.quantity, 10) || 1;
+          for (let i = 0; i < q; i++) {
+            gridBox.appendChild(createStoreTagElement(it, true));
+          }
+        });
+
+        printContainer.appendChild(gridBox);
+      }
+
       setTimeout(() => {
         window.print();
-      }, 150);
+      }, 200);
     }
 
-    // Client-side exact PDF generation (jsPDF)
-    async function downloadExactPdf() {
+    // PDF Download
+    async function downloadPdf() {
       if (items.length === 0) {
         alert('Немає позицій для генерації PDF.');
         return;
       }
 
       const { jsPDF } = window.jspdf;
-      // 133.2 pt x 68.04 pt = 46.99 mm x 24.00 mm
-      const doc = new jsPDF({
-        orientation: 'landscape',
-        unit: 'pt',
-        format: [133.2, 68.04]
-      });
 
-      const expanded = [];
-      items.forEach(it => {
-        let q = parseInt(it.quantity, 10) || 1;
-        for (let i = 0; i < q; i++) {
-          expanded.push(it);
-        }
-      });
+      if (currentMode === 'labels') {
+        // Exact 47x24mm (133.2 x 68.04 pt)
+        const doc = new jsPDF({
+          orientation: 'landscape',
+          unit: 'pt',
+          format: [133.2, 68.04]
+        });
 
-      for (let i = 0; i < expanded.length; i++) {
-        if (i > 0) doc.addPage([133.2, 68.04], 'landscape');
+        const expanded = [];
+        items.forEach(it => {
+          let q = parseInt(it.quantity, 10) || 1;
+          for (let i = 0; i < q; i++) expanded.push(it);
+        });
 
-        const it = expanded[i];
-        const lines = splitTitleForLabel(it.name);
+        for (let i = 0; i < expanded.length; i++) {
+          if (i > 0) doc.addPage([133.2, 68.04], 'landscape');
 
-        // Text styling
-        doc.setFont('Helvetica', 'normal');
-        doc.setFontSize(8.04);
-        doc.setTextColor(0, 0, 0);
+          const it = expanded[i];
+          const lines = splitTitleForLabel(it.name);
 
-        if (lines.length === 1) {
-          doc.text(lines[0], 133.2 / 2, 13.0, { align: 'center' });
-        } else {
-          doc.text(lines[0], 133.2 / 2, 10.5, { align: 'center' });
-          doc.text(lines[1], 133.2 / 2, 19.5, { align: 'center' });
-        }
+          doc.setFont('Helvetica', 'normal');
+          doc.setFontSize(8.04);
+          doc.setTextColor(0, 0, 0);
 
-        // Generate Barcode Canvas to draw in PDF
-        const cleanDigits = (it.barcode || '').replace(/\D/g, '');
-        if (cleanDigits.length === 12 || cleanDigits.length === 13) {
-          try {
-            const canvas = document.createElement('canvas');
-            JsBarcode(canvas, cleanDigits, {
-              format: 'EAN13',
-              width: 2,
-              height: 50,
-              displayValue: true,
-              fontSize: 18,
-              margin: 0
-            });
-            const imgData = canvas.toDataURL('image/png');
-            // Center barcode horizontally: width ~108.7 pt, height ~31.4 pt
-            let bcY = lines.length === 1 ? 21.0 : 25.0;
-            doc.addImage(imgData, 'PNG', 12.24, bcY, 108.72, 36.0);
-          } catch (e) {
-            console.error('Barcode canvas error:', e);
+          if (lines.length === 1) {
+            doc.text(lines[0], 133.2 / 2, 13.0, { align: 'center' });
+          } else {
+            doc.text(lines[0], 133.2 / 2, 10.5, { align: 'center' });
+            doc.text(lines[1], 133.2 / 2, 19.5, { align: 'center' });
+          }
+
+          const cleanDigits = (it.barcode || '').replace(/\D/g, '');
+          if (cleanDigits.length === 12 || cleanDigits.length === 13) {
+            try {
+              const canvas = document.createElement('canvas');
+              JsBarcode(canvas, cleanDigits, {
+                format: 'EAN13',
+                width: 2,
+                height: 50,
+                displayValue: true,
+                fontSize: 18,
+                margin: 0
+              });
+              const imgData = canvas.toDataURL('image/png');
+              let bcY = lines.length === 1 ? 21.0 : 25.0;
+              doc.addImage(imgData, 'PNG', 12.24, bcY, 108.72, 36.0);
+            } catch (e) {}
           }
         }
-      }
 
-      doc.save('GT_Racer_Labels_47x24mm_' + new Date().toISOString().slice(0, 10) + '.pdf');
+        doc.save('GT_Racer_Labels_47x24mm_' + new Date().toISOString().slice(0, 10) + '.pdf');
+      } else {
+        // Store Price Tags: Standard A4
+        triggerPrint();
+      }
     }
   </script>
 </body>
