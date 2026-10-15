@@ -2089,9 +2089,14 @@ GT Racer X-5993 Black	2
       card.style.height = heightMm + 'mm';
 
       const lines = splitTitleForLabel(item.name);
+      const maxLen = Math.max(...lines.map(l => l.length));
+      let effectiveFontSize = fontSizePt;
+      if (maxLen > 30) effectiveFontSize = Math.min(effectiveFontSize, 6.2);
+      else if (maxLen > 24) effectiveFontSize = Math.min(effectiveFontSize, 7.0);
+
       const titleBox = document.createElement('div');
       titleBox.className = 'label-title';
-      titleBox.style.fontSize = fontSizePt + 'pt';
+      titleBox.style.fontSize = effectiveFontSize + 'pt';
 
       lines.forEach(line => {
         const lineEl = document.createElement('div');
@@ -2322,9 +2327,13 @@ GT Racer X-5993 Black	2
 
           const it = expanded[i];
           const lines = splitTitleForLabel(it.name);
+          const maxLen = Math.max(...lines.map(l => l.length));
+          let pdfFontSize = 8.04;
+          if (maxLen > 30) pdfFontSize = 6.2;
+          else if (maxLen > 24) pdfFontSize = 7.0;
 
           doc.setFont('Helvetica', 'normal');
-          doc.setFontSize(8.04);
+          doc.setFontSize(pdfFontSize);
           doc.setTextColor(0, 0, 0);
 
           if (lines.length === 1) {

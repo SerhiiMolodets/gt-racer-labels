@@ -42,8 +42,22 @@ function splitTagTitle(name) {
   return { line1: title, line2: "" };
 }
 
+function getTagTitleFontSize(text, defaultSize = 26.0883) {
+  if (!text) return defaultSize;
+  const len = text.length;
+  // Maximum inner width between margins is ~268px
+  // In bold sans-serif, character advance width is approx 0.58 * font_size
+  if (len <= 18) return defaultSize;
+  const calcSize = Math.floor((268 / (len * 0.58)) * 10) / 10;
+  return Math.max(11, Math.min(defaultSize, calcSize));
+}
+
 function generateStoreTagSvgString(item, qrDataUrl) {
   const { line1, line2 } = splitTagTitle(item.name);
+  const fs1 = getTagTitleFontSize(line1, 26.0883);
+  const fs2 = getTagTitleFontSize(line2, 26.0883);
+  const titleY = line2 ? 39.1885 : 52;
+  const dy2 = line2 ? Math.round((fs1 * 0.6) + (fs2 * 0.6)) : 0;
   
   const pNewVal = item.price_rt || 0;
   const pOldVal = item.price_old || (pNewVal > 0 ? Math.round(pNewVal * 1.15) : 0);
@@ -143,10 +157,10 @@ function generateStoreTagSvgString(item, qrDataUrl) {
   <!-- Clean outer border -->
   <rect x="2" y="2" width="305" height="426.9" rx="10" ry="10" class="card-border"/>
 
-  <!-- Title (Model & Color) -->
-  <text transform="matrix(1 0 0 1 154.5 39.1885)" text-anchor="middle">
-    <tspan x="0" y="0" class="st2 st3">${escapeXml(line1)}</tspan>
-    <tspan x="0" y="31.3" class="st2 st3">${escapeXml(line2)}</tspan>
+  <!-- Title (Model & Color) with dynamic auto-fit font sizing -->
+  <text transform="matrix(1 0 0 1 154.5 ${titleY})" text-anchor="middle">
+    <tspan x="0" y="0" class="st2" style="font-size: ${fs1}px;">${escapeXml(line1)}</tspan>
+    ${line2 ? `<tspan x="0" y="${dy2}" class="st2" style="font-size: ${fs2}px; letter-spacing: ${fs2 < 14 ? '-0.4px' : 'normal'};">${escapeXml(line2)}</tspan>` : ''}
   </text>
 
   <!-- QR Code Image -->
