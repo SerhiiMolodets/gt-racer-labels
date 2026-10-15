@@ -16,7 +16,6 @@ function splitTagTitle(name) {
   if (match) {
     let t1 = match[1].trim();
     let t2 = match[2].trim();
-    // If t2 starts with "Fabric" and has color, keep together
     return { line1: t1, line2: t2 };
   }
 
@@ -58,17 +57,48 @@ function generateStoreTagSvgString(item, qrDataUrl) {
   const load = item.max_load || "120 кг";
   const war = item.warranty || "12 місяців";
 
-  // Calculate dynamic X offsets for prices
-  const oldX = 96.9 + (pOldStr.length - 5) * 22;
-  const newX = 182.6 + (pNewStr.length - 5) * 42;
-  
-  // Font size for very large numbers (>9999)
-  const isLargePrice = pNewVal > 9999;
-  const newPriceStyle = isLargePrice ? ' style="font-size: 63px;"' : '';
-  const oldPriceStyle = (pOldVal > 9999 ? 'font-size: 33px; ' : '') + 'text-decoration: line-through;';
+  // Dynamic positioning and styling to guarantee "грн" never overlaps price
+  // 5-digit price (e.g. 14 599) vs 4-digit price (e.g. 7 799) vs 3-digit price (e.g. 899)
+  let newPriceStartX = 24;
+  let newPriceStyle = '';
+  let unitStyle = '';
 
-  const monoImg = window.IMG_MONOBANK || "";
-  const privatImg = window.IMG_PRIVAT || "";
+  if (pNewVal > 9999) {
+    newPriceStartX = 18;
+    newPriceStyle = ' style="font-size: 60px;"';
+    unitStyle = ' style="font-size: 35px;"';
+  } else if (pNewVal > 999) {
+    newPriceStartX = 24;
+    newPriceStyle = '';
+    unitStyle = '';
+  } else if (pNewVal > 0) {
+    newPriceStartX = 42;
+    newPriceStyle = '';
+    unitStyle = '';
+  } else {
+    newPriceStartX = 18;
+    newPriceStyle = ' style="font-size: 36px;"';
+    unitStyle = '';
+  }
+
+  let oldPriceStartX = 140;
+  let oldPriceStyle = 'text-decoration: line-through;';
+  if (pOldVal > 9999) {
+    oldPriceStartX = 125;
+    oldPriceStyle = 'font-size: 34px; text-decoration: line-through;';
+  } else if (pOldVal > 999) {
+    oldPriceStartX = 140;
+    oldPriceStyle = 'text-decoration: line-through;';
+  } else {
+    oldPriceStartX = 155;
+    oldPriceStyle = 'text-decoration: line-through;';
+  }
+
+  const monoImg = (typeof window !== 'undefined' && window.IMG_MONOBANK) ? window.IMG_MONOBANK : "";
+  const privatImg = (typeof window !== 'undefined' && window.IMG_PRIVAT) ? window.IMG_PRIVAT : "";
+
+  const fontRegSrc = (typeof window !== 'undefined' && window.FONT_MYRIAD_REGULAR) ? window.FONT_MYRIAD_REGULAR : "fonts/MyriadPro-Regular.ttf";
+  const fontBoldSrc = (typeof window !== 'undefined' && window.FONT_MYRIAD_BOLD) ? window.FONT_MYRIAD_BOLD : "fonts/MyriadPro-Bold.ttf";
 
   return `
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 309 430.9" style="background:#ffffff; max-width: 100%; height: auto;" class="store-tag-svg">
@@ -76,23 +106,23 @@ function generateStoreTagSvgString(item, qrDataUrl) {
     <style type="text/css">
       @font-face {
         font-family: 'Myriad Pro';
-        src: url('fonts/MyriadPro-Regular.ttf') format('truetype');
+        src: url('${fontRegSrc}') format('truetype');
         font-weight: normal;
       }
       @font-face {
         font-family: 'Myriad Pro';
-        src: url('fonts/MyriadPro-Bold.ttf') format('truetype');
+        src: url('${fontBoldSrc}') format('truetype');
         font-weight: bold;
       }
-      .st0{font-family:'Myriad Pro', 'Montserrat', sans-serif; font-weight:normal;}
+      .st0{font-family:'Myriad Pro', 'Montserrat', Arial, sans-serif; font-weight:normal;}
       .st1{font-size:12px; fill:#000000;}
-      .st2{font-family:'Myriad Pro', 'Montserrat', sans-serif; font-weight:bold;}
+      .st2{font-family:'Myriad Pro', 'Montserrat', Arial, sans-serif; font-weight:bold;}
       .st3{font-size:26.0883px; fill:#000000;}
       .st4{font-size:40px; fill:#000000;}
       .st5{font-size:25px; fill:#000000;}
       .st6{font-size:75.3923px; fill:#000000;}
       .st7{font-size:43.0813px; fill:#000000;}
-      .st8{font-family:'Myriad Pro', 'Montserrat', sans-serif; font-weight:600;}
+      .st8{font-family:'Myriad Pro', 'Montserrat', Arial, sans-serif; font-weight:600;}
       .st9{fill:none;stroke:#000000;stroke-miterlimit:10;}
       .st10{fill:none;stroke:#000000;stroke-width:3.01;stroke-miterlimit:10;}
       .card-border{fill:none;stroke:#000000;stroke-width:1.5;}
@@ -121,16 +151,14 @@ function generateStoreTagSvgString(item, qrDataUrl) {
 
   <!-- Old Price (Strikethrough) -->
   ${hasOldPrice ? `
-  <text transform="matrix(1 0 0 1 150.0576 288.2741)">
-    <tspan x="0" y="0" class="st2 st4" style="${oldPriceStyle}">${pOldStr}</tspan>
-    <tspan x="${oldX.toFixed(1)}" y="0" class="st2 st5"> грн</tspan>
+  <text transform="matrix(1 0 0 1 ${oldPriceStartX} 288.2741)" xml:space="preserve">
+    <tspan class="st2 st4" style="${oldPriceStyle}">${pOldStr}</tspan><tspan class="st2 st5" dx="6">грн</tspan>
   </text>
   ` : ''}
 
   <!-- New Price (Main Large Price) -->
-  <text transform="matrix(1 0 0 1 31.8833 350.8818)">
-    <tspan x="0" y="0" class="st2 st6"${newPriceStyle}>${pNewStr}</tspan>
-    <tspan x="${newX.toFixed(1)}" y="0" class="st2 st7"> грн</tspan>
+  <text transform="matrix(1 0 0 1 ${newPriceStartX} 350.8818)" xml:space="preserve">
+    <tspan class="st2 st6"${newPriceStyle}>${pNewStr}</tspan>${pNewVal > 0 ? `<tspan class="st2 st7"${unitStyle} dx="8">грн</tspan>` : ''}
   </text>
 
   <!-- Monobank installment badge -->
