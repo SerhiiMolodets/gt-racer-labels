@@ -666,21 +666,26 @@ GT Racer X-5993 Black	2
               </div>
             </div>
 
-            <div class="overflow-x-auto max-h-96">
+            <div class="overflow-x-auto max-h-[520px] rounded-b-xl">
               <table class="min-w-full divide-y divide-gray-200 text-xs">
-                <thead class="bg-gray-50 text-gray-500 font-semibold sticky top-0 z-10">
+                <thead class="bg-gray-50/95 backdrop-blur-xs text-gray-500 font-bold text-[11px] uppercase tracking-wider border-b border-gray-200 sticky top-0 z-10 shadow-2xs">
                   <tr>
-                    <th class="px-2 py-2 text-left w-8">№</th>
-                    <th class="px-3 py-2 text-left">Товар</th>
-                    <th class="px-2 py-2 text-center w-28">Ціна (Нова / Стара)</th>
-                    <th class="px-2 py-2 text-left w-24">Характеристики</th>
-                    <th class="px-2 py-2 text-center w-16">К-сть</th>
-                    <th class="px-2 py-2 text-center w-12">Дія</th>
+                    <th class="px-3 py-3.5 text-center w-10">№</th>
+                    <th class="px-4 py-3.5 text-left min-w-[200px]">Товар / Штрихкод</th>
+                    <th class="px-4 py-3.5 text-center w-36">Ціна продажу</th>
+                    <th class="px-4 py-3.5 text-left min-w-[220px]">Характеристики для цінника</th>
+                    <th class="px-3 py-3.5 text-center w-28">Кількість</th>
+                    <th class="px-3 py-3.5 text-center w-20">Дії</th>
                   </tr>
                 </thead>
-                <tbody id="itemsTableBody" class="divide-y divide-gray-200 bg-white">
+                <tbody id="itemsTableBody" class="divide-y divide-gray-100 bg-white">
                   <tr>
-                    <td colspan="6" class="px-4 py-8 text-center text-gray-400">Список порожній. Вставте дані зліва.</td>
+                    <td colspan="6" class="px-4 py-12 text-center text-gray-400">
+                      <div class="flex flex-col items-center justify-center gap-2">
+                        <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
+                        <span>Список черги порожній. Вставте позиції зліва або завантажте Excel-шаблон.</span>
+                      </div>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -749,46 +754,46 @@ GT Racer X-5993 Black	2
             Характеристики для оригінального цінника (1:1)
           </div>
 
-          <div class="grid grid-cols-2 gap-2.5">
+          <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-gray-600 mb-1">Матеріал оббивки:</label>
-              <input type="text" id="editItemMaterial" list="listMaterials" class="w-full p-1.5 border border-gray-300 rounded text-xs">
-              <div class="flex flex-wrap gap-1 mt-1">
-                <button type="button" onclick="setModalField('editItemMaterial', 'Зносостійка тканина')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">Тканина</button>
-                <button type="button" onclick="setModalField('editItemMaterial', 'Екошкіра PU')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">Екошкіра</button>
-                <button type="button" onclick="setModalField('editItemMaterial', 'Дихаюча сітка')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">Сітка</button>
+              <label class="block text-gray-600 mb-1 font-medium">Матеріал оббивки:</label>
+              <input type="text" id="editItemMaterial" oninput="highlightActiveModalPills()" list="listMaterials" class="w-full p-2 border border-gray-300 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-red-500">
+              <div class="flex flex-wrap gap-1 mt-1.5">
+                <button type="button" data-field="editItemMaterial" data-val="Зносостійка тканина" onclick="setModalField('editItemMaterial', 'Зносостійка тканина')" class="px-2 py-0.5 rounded text-[10px] font-medium transition bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200">Тканина</button>
+                <button type="button" data-field="editItemMaterial" data-val="Екошкіра PU" onclick="setModalField('editItemMaterial', 'Екошкіра PU')" class="px-2 py-0.5 rounded text-[10px] font-medium transition bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200">Екошкіра</button>
+                <button type="button" data-field="editItemMaterial" data-val="Дихаюча сітка" onclick="setModalField('editItemMaterial', 'Дихаюча сітка')" class="px-2 py-0.5 rounded text-[10px] font-medium transition bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200">Сітка</button>
               </div>
             </div>
 
             <div>
-              <label class="block text-gray-600 mb-1">Підлокітники:</label>
-              <input type="text" id="editItemArmrests" list="listArmrests" class="w-full p-1.5 border border-gray-300 rounded text-xs">
-              <div class="flex flex-wrap gap-1 mt-1">
-                <button type="button" onclick="setModalField('editItemArmrests', '1D')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">1D</button>
-                <button type="button" onclick="setModalField('editItemArmrests', '2D')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">2D</button>
-                <button type="button" onclick="setModalField('editItemArmrests', '3D')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">3D</button>
-                <button type="button" onclick="setModalField('editItemArmrests', '4D')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">4D</button>
+              <label class="block text-gray-600 mb-1 font-medium">Підлокітники:</label>
+              <input type="text" id="editItemArmrests" oninput="highlightActiveModalPills()" list="listArmrests" class="w-full p-2 border border-gray-300 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-red-500">
+              <div class="flex flex-wrap gap-1 mt-1.5">
+                <button type="button" data-field="editItemArmrests" data-val="1D" onclick="setModalField('editItemArmrests', '1D')" class="px-2 py-0.5 rounded text-[10px] font-medium transition bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200">1D</button>
+                <button type="button" data-field="editItemArmrests" data-val="2D" onclick="setModalField('editItemArmrests', '2D')" class="px-2 py-0.5 rounded text-[10px] font-medium transition bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200">2D</button>
+                <button type="button" data-field="editItemArmrests" data-val="3D" onclick="setModalField('editItemArmrests', '3D')" class="px-2 py-0.5 rounded text-[10px] font-medium transition bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200">3D</button>
+                <button type="button" data-field="editItemArmrests" data-val="4D" onclick="setModalField('editItemArmrests', '4D')" class="px-2 py-0.5 rounded text-[10px] font-medium transition bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200">4D</button>
               </div>
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-2.5">
+          <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-gray-600 mb-1">Макс. навантаження:</label>
-              <input type="text" id="editItemMaxLoad" list="listMaxLoad" class="w-full p-1.5 border border-gray-300 rounded text-xs">
-              <div class="flex flex-wrap gap-1 mt-1">
-                <button type="button" onclick="setModalField('editItemMaxLoad', '100 кг')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">100 кг</button>
-                <button type="button" onclick="setModalField('editItemMaxLoad', '120 кг')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">120 кг</button>
-                <button type="button" onclick="setModalField('editItemMaxLoad', '150 кг')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">150 кг</button>
+              <label class="block text-gray-600 mb-1 font-medium">Макс. навантаження:</label>
+              <input type="text" id="editItemMaxLoad" oninput="highlightActiveModalPills()" list="listMaxLoad" class="w-full p-2 border border-gray-300 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-red-500">
+              <div class="flex flex-wrap gap-1 mt-1.5">
+                <button type="button" data-field="editItemMaxLoad" data-val="100 кг" onclick="setModalField('editItemMaxLoad', '100 кг')" class="px-2 py-0.5 rounded text-[10px] font-medium transition bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200">100 кг</button>
+                <button type="button" data-field="editItemMaxLoad" data-val="120 кг" onclick="setModalField('editItemMaxLoad', '120 кг')" class="px-2 py-0.5 rounded text-[10px] font-medium transition bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200">120 кг</button>
+                <button type="button" data-field="editItemMaxLoad" data-val="150 кг" onclick="setModalField('editItemMaxLoad', '150 кг')" class="px-2 py-0.5 rounded text-[10px] font-medium transition bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200">150 кг</button>
               </div>
             </div>
 
             <div>
-              <label class="block text-gray-600 mb-1">Гарантія:</label>
-              <input type="text" id="editItemWarranty" list="listWarranty" class="w-full p-1.5 border border-gray-300 rounded text-xs">
-              <div class="flex flex-wrap gap-1 mt-1">
-                <button type="button" onclick="setModalField('editItemWarranty', '12 місяців')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">12 міс</button>
-                <button type="button" onclick="setModalField('editItemWarranty', '24 місяці')" class="px-1.5 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-[10px]">24 міс</button>
+              <label class="block text-gray-600 mb-1 font-medium">Гарантія:</label>
+              <input type="text" id="editItemWarranty" oninput="highlightActiveModalPills()" list="listWarranty" class="w-full p-2 border border-gray-300 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-red-500">
+              <div class="flex flex-wrap gap-1 mt-1.5">
+                <button type="button" data-field="editItemWarranty" data-val="12 місяців" onclick="setModalField('editItemWarranty', '12 місяців')" class="px-2 py-0.5 rounded text-[10px] font-medium transition bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200">12 міс</button>
+                <button type="button" data-field="editItemWarranty" data-val="24 місяці" onclick="setModalField('editItemWarranty', '24 місяці')" class="px-2 py-0.5 rounded text-[10px] font-medium transition bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200">24 міс</button>
               </div>
             </div>
           </div>
@@ -1147,9 +1152,26 @@ GT Racer X-5993 Black	2
       }
     }
 
+    function highlightActiveModalPills() {
+      const pills = document.querySelectorAll('#modalEditItem [data-field]');
+      pills.forEach(pill => {
+        const field = pill.dataset.field;
+        const val = pill.dataset.val;
+        const input = document.getElementById(field);
+        if (input && input.value.trim().toLowerCase() === val.trim().toLowerCase()) {
+          pill.className = 'px-2 py-0.5 rounded text-[10px] font-bold transition bg-red-600 text-white shadow-xs border border-red-600';
+        } else {
+          pill.className = 'px-2 py-0.5 rounded text-[10px] font-medium transition bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200';
+        }
+      });
+    }
+
     function setModalField(fieldId, val) {
       const el = document.getElementById(fieldId);
-      if (el) el.value = val;
+      if (el) {
+        el.value = val;
+        highlightActiveModalPills();
+      }
     }
 
     // Manual Creation (Tab 4)
@@ -1600,6 +1622,7 @@ GT Racer X-5993 Black	2
       }
 
       document.getElementById('modalItemTitle').textContent = `Характеристики: ${item.name.substring(0, 32)}`;
+      highlightActiveModalPills();
       document.getElementById('modalEditItem').classList.remove('hidden');
     }
 
@@ -1788,48 +1811,105 @@ GT Racer X-5993 Black	2
     function renderTable() {
       const tbody = document.getElementById('itemsTableBody');
       if (items.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-gray-400">Список порожній. Вставте дані зліва або скористайтеся шаблоном.</td></tr>`;
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="px-4 py-12 text-center text-gray-400">
+              <div class="flex flex-col items-center justify-center gap-2">
+                <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
+                <span class="text-xs">Список черги порожній. Вставте позиції зліва або завантажте Excel-шаблон.</span>
+              </div>
+            </td>
+          </tr>
+        `;
         return;
       }
 
       tbody.innerHTML = items.map((it, idx) => {
         const needsAttention = it.needsReview || !it.barcode || !it.price_rt;
         return `
-          <tr class="hover:bg-gray-50 transition ${needsAttention ? 'bg-amber-50/40' : ''}">
-            <td class="px-2 py-2 text-gray-400 font-mono">${idx + 1}</td>
-            <td class="px-3 py-2">
-              <div class="font-bold text-gray-900 flex items-center gap-1.5 flex-wrap">
-                <span>${escapeHtml(it.name)}</span>
-                ${needsAttention ? `<span onclick="openEditItemModal('${it.id}')" class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-800 hover:bg-amber-200 cursor-pointer border border-amber-300" title="Натисніть для заповнення характеристик">⚠️ Уточнити</span>` : ''}
-              </div>
-              <div class="text-[10px] text-gray-400 font-mono">${it.barcode || '<span class=\"text-amber-600\">Без штрихкоду</span>'}</div>
+          <tr class="hover:bg-gray-50/90 transition duration-150 ${needsAttention ? 'bg-amber-50/30' : ''}">
+            <td class="px-3 py-3.5 text-center text-xs text-gray-400 font-mono font-semibold align-middle">
+              ${idx + 1}
             </td>
-            <td class="px-2 py-2 text-center">
-              <div class="flex items-center justify-center gap-1">
-                <input type="number" value="${it.price_rt || ''}" onchange="updateItemPrice('${it.id}', this.value)" placeholder="Ціна" class="w-14 text-center text-xs p-1 border rounded font-bold text-red-600" title="Ціна продажу">
-                <input type="number" value="${it.price_old || ''}" onchange="updateItemOldPrice('${it.id}', this.value)" placeholder="Стара" class="w-14 text-center text-xs p-1 border rounded text-gray-400 line-through" title="Стара ціна">
-              </div>
-            </td>
-            <td class="px-2 py-2">
-              <div class="text-[11px] space-y-0.5">
-                <div><span class="text-gray-400">Обб:</span> <input type="text" value="${escapeHtml(it.material || '')}" onchange="updateItemSpec('${it.id}', 'material', this.value)" class="p-0.5 border rounded w-20 text-[10px]"></div>
-                <div><span class="text-gray-400">Підл:</span> <input type="text" value="${escapeHtml(it.armrests || '')}" onchange="updateItemSpec('${it.id}', 'armrests', this.value)" class="p-0.5 border rounded w-12 text-[10px]"></div>
-                <div><span class="text-gray-400">Макс:</span> <input type="text" value="${escapeHtml(it.max_load || '')}" onchange="updateItemSpec('${it.id}', 'max_load', this.value)" class="p-0.5 border rounded w-14 text-[10px]"></div>
-              </div>
-            </td>
-            <td class="px-2 py-2 text-center">
-              <div class="inline-flex items-center border rounded overflow-hidden">
-                <button onclick="changeQty('${it.id}', -1)" class="px-1.5 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold">-</button>
-                <input type="number" min="1" value="${it.quantity}" onchange="updateItemQty('${it.id}', this.value)" class="w-8 text-center text-xs p-1 border-0 font-bold">
-                <button onclick="changeQty('${it.id}', 1)" class="px-1.5 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold">+</button>
+            
+            <!-- Product Title & Barcode -->
+            <td class="px-4 py-3.5 align-middle">
+              <div class="flex flex-col gap-0.5">
+                <div class="font-bold text-gray-900 text-xs sm:text-sm flex items-center gap-2 flex-wrap">
+                  <span>${escapeHtml(it.name)}</span>
+                  ${needsAttention ? `
+                    <span onclick="openEditItemModal('${it.id}')" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 hover:bg-amber-200 cursor-pointer shadow-xs transition" title="Натисніть для заповнення характеристик">
+                      ⚠️ Уточнити
+                    </span>
+                  ` : ''}
+                </div>
+                <div class="flex items-center gap-1.5 mt-0.5 text-[11px] text-gray-400 font-mono">
+                  <svg class="w-3.5 h-3.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                  ${it.barcode ? `<span>${it.barcode}</span>` : '<span class="text-amber-600 font-sans font-medium text-[10px]">Штрихкод відсутній</span>'}
+                </div>
               </div>
             </td>
-            <td class="px-2 py-2 text-center">
-              <div class="flex items-center justify-center gap-1">
-                <button onclick="openEditItemModal('${it.id}')" class="text-gray-400 hover:text-blue-600 transition p-1" title="Редагувати характеристики">
+
+            <!-- Price (New & Old) -->
+            <td class="px-4 py-3.5 text-center align-middle">
+              <div class="flex flex-col items-center gap-1">
+                <div class="inline-flex items-center gap-1 bg-white border border-gray-200 hover:border-red-400 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100 rounded-lg px-2 py-1 shadow-xs transition">
+                  <input type="number" value="${it.price_rt || ''}" onchange="updateItemPrice('${it.id}', this.value)" 
+                    placeholder="0" class="w-16 text-right text-xs font-black text-red-600 bg-transparent border-0 p-0 focus:ring-0 focus:outline-none" title="Ціна продажу">
+                  <span class="text-[11px] font-bold text-gray-400">₴</span>
+                </div>
+                <div class="inline-flex items-center gap-1 text-[11px] text-gray-400">
+                  <span class="text-[10px] text-gray-400">стара:</span>
+                  <input type="number" value="${it.price_old || ''}" onchange="updateItemOldPrice('${it.id}', this.value)" 
+                    placeholder="—" class="w-14 text-right text-[11px] text-gray-400 line-through bg-transparent border-b border-dashed border-gray-300 p-0 focus:ring-0 focus:outline-none hover:border-gray-500 focus:border-red-500 transition" title="Стара акційна ціна">
+                  <span class="text-[10px]">₴</span>
+                </div>
+              </div>
+            </td>
+
+            <!-- Characteristics (Clean Cards / Badges) -->
+            <td class="px-4 py-3.5 align-middle">
+              <div class="cursor-pointer group/spec" onclick="openEditItemModal('${it.id}')" title="Натисніть для зміни характеристик">
+                <div class="flex items-center gap-1.5 mb-1.5">
+                  <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Оббивка:</span>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-gray-100 group-hover/spec:bg-red-50 group-hover/spec:text-red-700 text-gray-800 text-xs font-medium transition border border-gray-200/60 max-w-[190px] truncate">
+                    ${escapeHtml(it.material || 'Зносостійка тканина')}
+                  </span>
+                </div>
+                <div class="flex flex-wrap items-center gap-1.5 text-[11px]">
+                  <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-gray-50 border border-gray-200/80 text-gray-600" title="Підлокітники">
+                    <span class="text-gray-400">Підл:</span>
+                    <strong class="text-gray-800 font-semibold">${escapeHtml(it.armrests || '1D')}</strong>
+                  </span>
+                  <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-gray-50 border border-gray-200/80 text-gray-600" title="Максимальне навантаження">
+                    <span class="text-gray-400">Макс:</span>
+                    <strong class="text-gray-800 font-semibold">${escapeHtml(it.max_load || '120 кг')}</strong>
+                  </span>
+                  <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-gray-50 border border-gray-200/80 text-gray-600" title="Гарантія">
+                    <span class="text-gray-400">Гар:</span>
+                    <strong class="text-gray-800 font-semibold">${escapeHtml(it.warranty || '12 міс')}</strong>
+                  </span>
+                  <span class="text-blue-600 text-[10px] opacity-0 group-hover/spec:opacity-100 transition font-medium ml-1">✏️ змінити</span>
+                </div>
+              </div>
+            </td>
+
+            <!-- Quantity Stepper -->
+            <td class="px-3 py-3.5 text-center align-middle">
+              <div class="inline-flex items-center bg-gray-50 border border-gray-200 rounded-lg p-0.5 shadow-2xs">
+                <button onclick="changeQty('${it.id}', -1)" class="w-6 h-6 flex items-center justify-center rounded-md bg-white hover:bg-gray-100 text-gray-700 font-bold text-xs shadow-xs transition border border-gray-200/70" title="Зменшити">-</button>
+                <input type="number" min="1" value="${it.quantity}" onchange="updateItemQty('${it.id}', this.value)" class="w-9 text-center text-xs font-bold text-gray-800 bg-transparent border-0 p-0 focus:ring-0 focus:outline-none">
+                <button onclick="changeQty('${it.id}', 1)" class="w-6 h-6 flex items-center justify-center rounded-md bg-white hover:bg-gray-100 text-gray-700 font-bold text-xs shadow-xs transition border border-gray-200/70" title="Збільшити">+</button>
+              </div>
+            </td>
+
+            <!-- Actions -->
+            <td class="px-3 py-3.5 text-center align-middle">
+              <div class="flex items-center justify-center gap-1.5">
+                <button onclick="openEditItemModal('${it.id}')" class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Редагувати характеристики">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                 </button>
-                <button onclick="deleteItem('${it.id}')" class="text-gray-400 hover:text-red-600 transition p-1" title="Видалити">
+                <button onclick="deleteItem('${it.id}')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition" title="Видалити">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                 </button>
               </div>
