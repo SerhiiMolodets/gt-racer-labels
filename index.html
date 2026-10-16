@@ -92,6 +92,30 @@
         position: relative !important;
       }
 
+      .barcode-container {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        margin-top: 0.6mm !important;
+      }
+
+      .barcode-svg {
+        display: block !important;
+      }
+
+      .barcode-text {
+        font-family: 'Consolas', 'Courier New', Courier, monospace !important;
+        font-size: 7.5pt !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.5px !important;
+        line-height: 1 !important;
+        margin-top: 0.4mm !important;
+        color: #000 !important;
+        text-align: center !important;
+        white-space: nowrap !important;
+      }
+
       body.mode-tags {
         background: #fff !important;
         margin: 0 !important;
@@ -259,12 +283,34 @@
       white-space: normal;
     }
 
-    .barcode-svg {
+    .barcode-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
       width: 35mm;
       max-width: 100%;
-      height: 11.2mm;
       margin-top: 0.6mm;
+    }
+
+    .barcode-svg {
+      width: 100%;
+      max-width: 100%;
+      height: 8.4mm;
       display: block;
+    }
+
+    .barcode-text {
+      font-family: 'Consolas', 'Courier New', Courier, monospace;
+      font-size: 7.5pt;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      line-height: 1;
+      margin-top: 0.4mm;
+      color: #000;
+      text-align: center;
+      width: 100%;
+      white-space: nowrap;
     }
 
     /* Price tag container */
@@ -612,11 +658,11 @@ GT Racer X-5993 Black	2
                 </div>
                 
                 <div class="grid grid-cols-5 gap-1 mb-2">
-                  <button type="button" onclick="setOffsetXPreset(-3)" class="py-1 px-1 bg-white hover:bg-amber-100 border border-amber-300 rounded font-bold text-amber-900 text-[11px] text-center" title="Зсунути вліво на 3 мм">-3 мм</button>
-                  <button type="button" onclick="setOffsetXPreset(-2.5)" class="py-1 px-1 bg-amber-200 hover:bg-amber-300 border border-amber-400 rounded font-black text-amber-950 text-[11px] text-center shadow-sm" title="Рекомендовано для усунення зсуву вправо">-2.5 мм ⭐</button>
-                  <button type="button" onclick="setOffsetXPreset(-2)" class="py-1 px-1 bg-white hover:bg-amber-100 border border-amber-300 rounded font-bold text-amber-900 text-[11px] text-center" title="Зсунути вліво на 2 мм">-2 мм</button>
+                  <button type="button" onclick="setOffsetXPreset(0)" class="py-1 px-1 bg-green-200 hover:bg-green-300 border border-green-400 rounded font-black text-green-950 text-[11px] text-center shadow-sm" title="Стандарт по центру">0 мм ⭐</button>
                   <button type="button" onclick="setOffsetXPreset(-1)" class="py-1 px-1 bg-white hover:bg-amber-100 border border-amber-300 rounded font-bold text-amber-900 text-[11px] text-center" title="Зсунути вліво на 1 мм">-1 мм</button>
-                  <button type="button" onclick="setOffsetXPreset(0)" class="py-1 px-1 bg-white hover:bg-gray-100 border border-gray-300 rounded font-medium text-gray-700 text-[11px] text-center" title="Скинути на 0">0 мм</button>
+                  <button type="button" onclick="setOffsetXPreset(-2)" class="py-1 px-1 bg-white hover:bg-amber-100 border border-amber-300 rounded font-bold text-amber-900 text-[11px] text-center" title="Зсунути вліво на 2 мм">-2 мм</button>
+                  <button type="button" onclick="setOffsetXPreset(-2.5)" class="py-1 px-1 bg-white hover:bg-amber-100 border border-amber-300 rounded font-bold text-amber-900 text-[11px] text-center" title="Зсунути вліво на 2.5 мм">-2.5 мм</button>
+                  <button type="button" onclick="setOffsetXPreset(1)" class="py-1 px-1 bg-white hover:bg-amber-100 border border-amber-300 rounded font-bold text-amber-900 text-[11px] text-center" title="Зсунути вправо на 1 мм">+1 мм</button>
                 </div>
 
                 <div class="flex items-center gap-2">
@@ -626,7 +672,7 @@ GT Racer X-5993 Black	2
                 </div>
 
                 <p class="text-[10px] text-amber-800 mt-2 leading-tight">
-                  📌 <b>Обрізається правий край?</b> Механічні напрямні принтера або драйвер подають рулон зі зміщенням праворуч. Оберіть <b>-2.5 мм</b> або <b>-3 мм</b>, щоб відцентрувати наліпку. Налаштування зберігається автоматично.
+                  📌 <b>Штрихкод центрований за стандартом (0 мм)</b> — смуги та цифри симетричні. Якщо ваш конкретний термопринтер має механічний зсув стрічки, можна підкоригувати зсув тут.
                 </p>
               </div>
             </div>
@@ -699,7 +745,7 @@ GT Racer X-5993 Black	2
                   1. У вікні друку виберіть ваш термопринтер (напр. Xprinter, Zebra тощо).<br>
                   2. Встановіть розмір паперу: <b>47×24 мм</b> (або Користувацький 47x24мм).<br>
                   3. Поля (Margins): <b>«Немає» (None)</b>, Масштаб (Scale): <b>100%</b>.<br>
-                  4. Якщо край обрізається через механічний зсув рулону — натисніть <b>«-2.5 мм ⭐»</b> у блоці калібрування ліворуч.
+                  4. Штрихкод центрований за стандартом (<b>0 мм ⭐</b>). Якщо у принтера є механічний зсув стрічки — підкоригуйте у блоці калібрування ліворуч.
                 </div>
               </div>
             </div>
@@ -2284,6 +2330,30 @@ GT Racer X-5993 Black	2
       XLSX.writeFile(wb, 'GT_Racer_' + new Date().toISOString().slice(0, 10) + '.xlsx');
     }
 
+    // Barcode helpers: checksum & human readable text formatting
+    function getEan13WithChecksum(digits) {
+      let clean = (digits || '').replace(/\D/g, '');
+      if (clean.length === 12) {
+        let sum = 0;
+        for (let i = 0; i < 12; i++) {
+          let n = parseInt(clean[i], 10);
+          sum += (i % 2 === 0) ? n : n * 3;
+        }
+        let checksum = (10 - (sum % 10)) % 10;
+        clean += checksum;
+      }
+      return clean;
+    }
+
+    function formatBarcodeText(digits, forHtml = false) {
+      let clean = getEan13WithChecksum(digits);
+      if (clean.length === 13) {
+        let sp = forHtml ? '\u00A0\u00A0' : '  ';
+        return clean[0] + sp + clean.slice(1, 7) + sp + clean.slice(7);
+      }
+      return clean;
+    }
+
     // Helper: Split title for thermal label (balances 2 lines at word boundaries)
     function splitTitleForLabel(title) {
       title = (title || '').trim();
@@ -2389,25 +2459,35 @@ GT Racer X-5993 Black	2
       });
       inner.appendChild(titleBox);
 
-      const barcodeSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      barcodeSvg.className = 'barcode-svg';
-      barcodeSvg.style.width = barcodeWidthMm + 'mm';
-      barcodeSvg.style.height = barcodeHeightMm + 'mm';
-
       let cleanDigits = (item.barcode || '').replace(/\D/g, '');
       if (cleanDigits.length === 12 || cleanDigits.length === 13) {
         try {
+          const barcodeBox = document.createElement('div');
+          barcodeBox.className = 'barcode-container';
+          barcodeBox.style.width = barcodeWidthMm + 'mm';
+
+          const barcodeSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          barcodeSvg.className = 'barcode-svg';
+          const barsHeightMm = Math.max(5.0, barcodeHeightMm - 2.8);
+          barcodeSvg.style.width = '100%';
+          barcodeSvg.style.height = barsHeightMm + 'mm';
+
           JsBarcode(barcodeSvg, cleanDigits, {
             format: 'EAN13',
             width: 1.15,
-            height: barcodeHeightMm * 2.8,
-            fontSize: 10,
-            textMargin: 1,
+            height: barsHeightMm * 2.83,
             margin: 0,
-            displayValue: true,
-            font: 'Arial'
+            displayValue: false
           });
-          inner.appendChild(barcodeSvg);
+          barcodeBox.appendChild(barcodeSvg);
+
+          const formattedText = formatBarcodeText(cleanDigits, true);
+          const barcodeText = document.createElement('div');
+          barcodeText.className = 'barcode-text';
+          barcodeText.textContent = formattedText;
+          barcodeBox.appendChild(barcodeText);
+
+          inner.appendChild(barcodeBox);
         } catch (e) {
           let errBox = document.createElement('div');
           errBox.className = 'text-[9px] text-red-500 font-mono mt-2';
@@ -2663,18 +2743,26 @@ GT Racer X-5993 Black	2
           const cleanDigits = (it.barcode || '').replace(/\D/g, '');
           if (cleanDigits.length === 12 || cleanDigits.length === 13) {
             try {
+              const fullCode = getEan13WithChecksum(cleanDigits);
+              const formattedCode = formatBarcodeText(cleanDigits, false);
               const canvas = document.createElement('canvas');
               JsBarcode(canvas, cleanDigits, {
                 format: 'EAN13',
                 width: 2,
-                height: 50,
-                displayValue: true,
-                fontSize: 18,
+                height: 45,
+                displayValue: false,
                 margin: 0
               });
               const imgData = canvas.toDataURL('image/png');
+              const barsHeightMm = Math.max(5.0, barcodeHeightMm - 2.8);
+              const bcBarsHeightPt = barsHeightMm * (72 / 25.4);
               let bcY = lines.length === 1 ? 21.0 : 24.5;
-              doc.addImage(imgData, 'PNG', bcX, bcY, bcWidthPt, bcHeightPt);
+              doc.addImage(imgData, 'PNG', bcX, bcY, bcWidthPt, bcBarsHeightPt);
+
+              doc.setFont('Courier', 'bold');
+              doc.setFontSize(7.5);
+              doc.setTextColor(0, 0, 0);
+              doc.text(formattedCode, centerX, bcY + bcBarsHeightPt + 7.0, { align: 'center' });
             } catch (e) {}
           }
         }
