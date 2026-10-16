@@ -549,34 +549,57 @@ GT Racer X-5993 Black	2
             
             <!-- Settings for Labels Mode -->
             <div id="settingsBoxLabels">
-              <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3 flex items-center justify-between">
-                <span>Параметри етикетки</span>
-                <span class="text-xs font-normal text-gray-500">Під рулон термопринтера</span>
-              </h3>
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider flex items-center gap-1.5">
+                  <span>Параметри етикетки</span>
+                </h3>
+                <span id="savedSettingsIndicator" class="text-[10px] font-bold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded transition duration-300 opacity-0">✓ Збережено</span>
+              </div>
+
+              <!-- Quick Size Presets -->
+              <div class="mb-3 bg-gray-50 border border-gray-200 rounded p-2">
+                <div class="text-[10px] text-gray-500 mb-1 flex items-center justify-between">
+                  <span class="font-medium text-gray-600">Швидкі розміри рулону:</span>
+                  <button type="button" onclick="resetLabelSettingsToDefault()" class="text-blue-600 hover:underline text-[10px]" title="Скинути до стандартних налаштувань">Скинути до 47×24 мм</button>
+                </div>
+                <div class="grid grid-cols-3 gap-1.5 text-xs">
+                  <button type="button" onclick="applyLabelSizePreset(47, 24, 8, 11, 35)" class="py-1 px-1 bg-white hover:bg-red-50 border border-gray-300 hover:border-red-300 rounded font-bold text-[11px] text-gray-800 text-center transition" title="Стандарт для коробок GT Racer">47 × 24 мм ⭐</button>
+                  <button type="button" onclick="applyLabelSizePreset(58, 40, 9, 14, 45)" class="py-1 px-1 bg-white hover:bg-gray-100 border border-gray-300 rounded font-medium text-[11px] text-gray-700 text-center transition" title="Універсальний великий стікер">58 × 40 мм</button>
+                  <button type="button" onclick="applyLabelSizePreset(40, 25, 7.5, 10, 30)" class="py-1 px-1 bg-white hover:bg-gray-100 border border-gray-300 rounded font-medium text-[11px] text-gray-700 text-center transition" title="Компактний стікер">40 × 25 мм</button>
+                </div>
+              </div>
+
               <div class="grid grid-cols-2 gap-3 text-xs">
                 <div>
                   <label class="text-gray-600 block mb-1">Ширина (мм):</label>
-                  <input type="number" id="cfgWidthMm" value="47" step="1" onchange="renderAllPreviews()" class="w-full p-2 border rounded font-semibold text-center">
+                  <input type="number" id="cfgWidthMm" value="47" step="1" min="20" max="150" oninput="onLabelSettingChange()" class="w-full p-2 border rounded font-semibold text-center">
                 </div>
                 <div>
                   <label class="text-gray-600 block mb-1">Висота (мм):</label>
-                  <input type="number" id="cfgHeightMm" value="24" step="1" onchange="renderAllPreviews()" class="w-full p-2 border rounded font-semibold text-center">
+                  <input type="number" id="cfgHeightMm" value="24" step="1" min="15" max="150" oninput="onLabelSettingChange()" class="w-full p-2 border rounded font-semibold text-center">
                 </div>
                 <div>
                   <label class="text-gray-600 block mb-1">Розмір шрифту (pt):</label>
-                  <input type="number" id="cfgFontSize" value="8" step="0.5" onchange="renderAllPreviews()" class="w-full p-2 border rounded font-semibold text-center">
+                  <input type="number" id="cfgFontSize" value="8" step="0.5" min="5" max="16" oninput="onLabelSettingChange()" class="w-full p-2 border rounded font-semibold text-center">
                 </div>
                 <div>
                   <label class="text-gray-600 block mb-1">Висота ШК (мм):</label>
-                  <input type="number" id="cfgBarcodeHeight" value="11" step="0.5" onchange="renderAllPreviews()" class="w-full p-2 border rounded font-semibold text-center">
+                  <input type="number" id="cfgBarcodeHeight" value="11" step="0.5" min="6" max="50" oninput="onLabelSettingChange()" class="w-full p-2 border rounded font-semibold text-center">
                 </div>
                 <div class="col-span-2">
                   <div class="flex justify-between items-center mb-1">
                     <label class="text-gray-600">Ширина ШК (мм):</label>
-                    <span class="text-[10px] text-gray-400">стандарт 35 мм</span>
+                    <span class="text-[10px] text-gray-400">рекомендовано 35 мм для 47 мм</span>
                   </div>
-                  <input type="number" id="cfgBarcodeWidth" value="35" step="0.5" min="25" max="44" onchange="onBarcodeWidthChange()" class="w-full p-2 border rounded font-semibold text-center">
+                  <input type="number" id="cfgBarcodeWidth" value="35" step="0.5" min="20" max="100" oninput="onLabelSettingChange()" class="w-full p-2 border rounded font-semibold text-center">
                 </div>
+              </div>
+
+              <!-- Button to manually save as default -->
+              <div class="mt-2.5">
+                <button type="button" onclick="saveLabelSettings(true)" class="w-full py-1.5 px-3 bg-gray-800 hover:bg-black text-white font-semibold rounded text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
+                  <span>💾 Зберегти ці розміри за замовчуванням</span>
+                </button>
               </div>
 
               <!-- Calibration Offset Box -->
@@ -928,9 +951,100 @@ GT Racer X-5993 Black	2
         document.head.appendChild(styleEl);
       }
       if (currentMode === 'labels') {
-        styleEl.textContent = `@page { size: 47mm 24mm; margin: 0; }`;
+        const w = parseFloat(document.getElementById('cfgWidthMm')?.value) || 47;
+        const h = parseFloat(document.getElementById('cfgHeightMm')?.value) || 24;
+        styleEl.textContent = `@page { size: ${w}mm ${h}mm; margin: 0; }`;
       } else {
         styleEl.textContent = `@page { size: A4 portrait; margin: 5mm; }`;
+      }
+    }
+
+    function showSaveToast(msg = '✓ Збережено за замовчуванням') {
+      const el = document.getElementById('savedSettingsIndicator');
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.remove('opacity-0');
+      clearTimeout(window.__saveToastTimer);
+      window.__saveToastTimer = setTimeout(() => {
+        el.classList.add('opacity-0');
+      }, 2500);
+    }
+
+    function updateModeLabelsText() {
+      if (currentMode !== 'labels') return;
+      const w = parseFloat(document.getElementById('cfgWidthMm')?.value) || 47;
+      const h = parseFloat(document.getElementById('cfgHeightMm')?.value) || 24;
+      const dimText = `(${w}×${h} мм)`;
+      
+      const badge = document.getElementById('activeModeBadge');
+      if (badge) badge.textContent = `Етикетки ${dimText}`;
+
+      const btnPrintMain = document.getElementById('btnPrintMain');
+      if (btnPrintMain) {
+        const span = btnPrintMain.querySelector('span');
+        if (span) span.textContent = `Друкувати на термопринтері ${dimText}`;
+      }
+
+      const btnDownloadPdf = document.getElementById('btnDownloadPdf');
+      if (btnDownloadPdf) {
+        const span = btnDownloadPdf.querySelector('span');
+        if (span) span.textContent = `Завантажити PDF ${dimText}`;
+      }
+
+      const previewTitle = document.getElementById('previewSectionTitle');
+      if (previewTitle) previewTitle.textContent = `Попередній перегляд етикетки ${dimText}`;
+    }
+
+    function saveLabelSettings(manual = false) {
+      const w = parseFloat(document.getElementById('cfgWidthMm')?.value) || 47;
+      const h = parseFloat(document.getElementById('cfgHeightMm')?.value) || 24;
+      const fs = parseFloat(document.getElementById('cfgFontSize')?.value) || 8;
+      const bh = parseFloat(document.getElementById('cfgBarcodeHeight')?.value) || 11;
+      const bw = parseFloat(document.getElementById('cfgBarcodeWidth')?.value) || 35;
+      const ox = parseFloat(document.getElementById('cfgOffsetX')?.value) || 0;
+
+      const settings = {
+        widthMm: w,
+        heightMm: h,
+        fontSize: fs,
+        barcodeHeight: bh,
+        barcodeWidth: bw,
+        offsetX: ox
+      };
+
+      localStorage.setItem('GT_LABEL_DEFAULT_SETTINGS', JSON.stringify(settings));
+      // Backward compatibility
+      localStorage.setItem('gt_labels_offset_x', ox);
+      localStorage.setItem('gt_labels_bc_width', bw);
+
+      updateDynamicPrintStyle();
+      updateModeLabelsText();
+      renderAllPreviews();
+
+      if (manual) {
+        showSaveToast('✓ Розміри збережено як стандарт!');
+      } else {
+        showSaveToast('✓ Збережено');
+      }
+    }
+
+    function onLabelSettingChange() {
+      saveLabelSettings(false);
+    }
+
+    function applyLabelSizePreset(w, h, fs = 8, bh = 11, bw = 35) {
+      if (document.getElementById('cfgWidthMm')) document.getElementById('cfgWidthMm').value = w;
+      if (document.getElementById('cfgHeightMm')) document.getElementById('cfgHeightMm').value = h;
+      if (document.getElementById('cfgFontSize')) document.getElementById('cfgFontSize').value = fs;
+      if (document.getElementById('cfgBarcodeHeight')) document.getElementById('cfgBarcodeHeight').value = bh;
+      if (document.getElementById('cfgBarcodeWidth')) document.getElementById('cfgBarcodeWidth').value = bw;
+      saveLabelSettings(true);
+    }
+
+    function resetLabelSettingsToDefault() {
+      if (confirm('Скинути параметри етикетки до стандарту GT Racer (47 × 24 мм)?')) {
+        applyLabelSizePreset(47, 24, 8, 11, 35);
+        setOffsetXPreset(0);
       }
     }
 
@@ -938,8 +1052,7 @@ GT Racer X-5993 Black	2
       const val = parseFloat(document.getElementById('cfgOffsetX').value) || 0;
       const valEl = document.getElementById('cfgOffsetXVal');
       if (valEl) valEl.textContent = `${val > 0 ? '+' : ''}${val} мм`;
-      localStorage.setItem('gt_labels_offset_x', val);
-      renderAllPreviews();
+      saveLabelSettings(false);
     }
 
     function setOffsetXPreset(val) {
@@ -955,30 +1068,42 @@ GT Racer X-5993 Black	2
       onOffsetXChange();
     }
 
-    function onBarcodeWidthChange() {
-      const val = parseFloat(document.getElementById('cfgBarcodeWidth').value) || 35;
-      localStorage.setItem('gt_labels_bc_width', val);
-      renderAllPreviews();
-    }
-
     function loadCalibrationSettings() {
-      const savedOffsetX = localStorage.getItem('gt_labels_offset_x');
-      if (savedOffsetX !== null) {
-        const input = document.getElementById('cfgOffsetX');
-        if (input) input.value = savedOffsetX;
-        const valEl = document.getElementById('cfgOffsetXVal');
-        if (valEl) valEl.textContent = `${parseFloat(savedOffsetX) > 0 ? '+' : ''}${savedOffsetX} мм`;
+      let settings = null;
+      try {
+        const raw = localStorage.getItem('GT_LABEL_DEFAULT_SETTINGS');
+        if (raw) settings = JSON.parse(raw);
+      } catch (e) {}
+
+      if (!settings) {
+        settings = {
+          widthMm: 47,
+          heightMm: 24,
+          fontSize: 8,
+          barcodeHeight: 11,
+          barcodeWidth: parseFloat(localStorage.getItem('gt_labels_bc_width')) || 35,
+          offsetX: parseFloat(localStorage.getItem('gt_labels_offset_x')) || 0
+        };
       }
-      const savedBcWidth = localStorage.getItem('gt_labels_bc_width');
-      if (savedBcWidth !== null) {
-        const input = document.getElementById('cfgBarcodeWidth');
-        if (input) input.value = savedBcWidth;
+
+      if (document.getElementById('cfgWidthMm')) document.getElementById('cfgWidthMm').value = settings.widthMm ?? 47;
+      if (document.getElementById('cfgHeightMm')) document.getElementById('cfgHeightMm').value = settings.heightMm ?? 24;
+      if (document.getElementById('cfgFontSize')) document.getElementById('cfgFontSize').value = settings.fontSize ?? 8;
+      if (document.getElementById('cfgBarcodeHeight')) document.getElementById('cfgBarcodeHeight').value = settings.barcodeHeight ?? 11;
+      if (document.getElementById('cfgBarcodeWidth')) document.getElementById('cfgBarcodeWidth').value = settings.barcodeWidth ?? 35;
+      if (document.getElementById('cfgOffsetX')) document.getElementById('cfgOffsetX').value = settings.offsetX ?? 0;
+
+      const valEl = document.getElementById('cfgOffsetXVal');
+      if (valEl) {
+        const off = settings.offsetX ?? 0;
+        valEl.textContent = `${off > 0 ? '+' : ''}${off} мм`;
       }
     }
 
     window.addEventListener('DOMContentLoaded', () => {
       loadCalibrationSettings();
       updateDynamicPrintStyle();
+      updateModeLabelsText();
 
       if (window.PRELOADED_PRODUCTS && window.PRELOADED_PRODUCTS.length > 0) {
         catalog = window.PRELOADED_PRODUCTS;
@@ -1020,12 +1145,9 @@ GT Racer X-5993 Black	2
       if (mode === 'labels') {
         btnLabels.className = 'py-1.5 px-3.5 rounded-lg bg-red-600 text-white shadow flex items-center gap-1.5 transition';
         btnTags.className = 'py-1.5 px-3.5 rounded-lg text-gray-400 hover:text-white flex items-center gap-1.5 transition';
-        badge.textContent = 'Етикетки (47×24 мм)';
         settingsLabels.classList.remove('hidden');
         settingsTags.classList.add('hidden');
-        btnPrintMain.querySelector('span').textContent = 'Друкувати на термопринтері (47×24 мм)';
-        btnDownloadPdf.querySelector('span').textContent = 'Завантажити PDF (47×24 мм)';
-        previewTitle.textContent = 'Попередній перегляд етикетки (47×24 мм)';
+        updateModeLabelsText();
         if (thermalHint) thermalHint.classList.remove('hidden');
       } else {
         btnTags.className = 'py-1.5 px-3.5 rounded-lg bg-red-600 text-white shadow flex items-center gap-1.5 transition';
@@ -2474,10 +2596,16 @@ GT Racer X-5993 Black	2
       const { jsPDF } = window.jspdf;
 
       if (currentMode === 'labels') {
+        const widthMm = parseFloat(document.getElementById('cfgWidthMm')?.value) || 47;
+        const heightMm = parseFloat(document.getElementById('cfgHeightMm')?.value) || 24;
+        const widthPt = widthMm * (72 / 25.4);
+        const heightPt = heightMm * (72 / 25.4);
+        const orientation = widthMm >= heightMm ? 'landscape' : 'portrait';
+
         const doc = new jsPDF({
-          orientation: 'landscape',
+          orientation: orientation,
           unit: 'pt',
-          format: [133.2, 68.04]
+          format: [widthPt, heightPt]
         });
 
         // Register Myriad Pro font if available for 100% Cyrillic support
@@ -2495,7 +2623,7 @@ GT Racer X-5993 Black	2
 
         const offsetXMm = parseFloat(document.getElementById('cfgOffsetX')?.value) || 0;
         const offsetPt = offsetXMm * (72 / 25.4);
-        const centerX = (133.2 / 2) + offsetPt;
+        const centerX = (widthPt / 2) + offsetPt;
 
         const barcodeWidthMm = parseFloat(document.getElementById('cfgBarcodeWidth')?.value) || 35.0;
         const barcodeHeightMm = parseFloat(document.getElementById('cfgBarcodeHeight')?.value) || 11.2;
@@ -2510,7 +2638,7 @@ GT Racer X-5993 Black	2
         });
 
         for (let i = 0; i < expanded.length; i++) {
-          if (i > 0) doc.addPage([133.2, 68.04], 'landscape');
+          if (i > 0) doc.addPage([widthPt, heightPt], orientation);
 
           const it = expanded[i];
           const lines = splitTitleForLabel(it.name);
@@ -2551,7 +2679,7 @@ GT Racer X-5993 Black	2
           }
         }
 
-        doc.save('GT_Racer_Labels_47x24mm_' + new Date().toISOString().slice(0, 10) + '.pdf');
+        doc.save('GT_Racer_Labels_' + widthMm + 'x' + heightMm + 'mm_' + new Date().toISOString().slice(0, 10) + '.pdf');
       } else {
         // Trigger browser print dialog for store tags (generates vector A4 PDF)
         triggerPrint();
