@@ -1559,40 +1559,84 @@ GT Racer X-5993 Black	2
           continue;
         }
 
-        let delimiter = line.includes('\t') ? '\t' : ',';
-        let parts = delimiter === '\t' ? line.split('\t') : parseCsvLine(line);
-        parts = parts.map(p => p.trim()).filter(p => p !== '');
+        let parts = [];
+        if (line.includes('\t')) {
+          parts = line.split('\t');
+        } else if (line.includes(';') && !line.includes('&quot;')) {
+          parts = line.split(';');
+        } else if (/\s{2,}/.test(line)) {
+          parts = line.split(/\s{2,}/);
+        } else if (line.includes(',') && (line.includes('"') || /,\s*\d+/.test(line))) {
+          parts = parseCsvLine(line);
+        } else {
+          parts = [line];
+        }
+        parts = parts.map(p => p.trim()).filter(Boolean);
 
         if (parts.length === 0) continue;
 
         let nameCand = null;
         let qtyCand = 1;
+        let priceCand = null;
 
-        for (let i = 0; i < parts.length; i++) {
-          let p = parts[i];
-          if (/gt racer/i.test(p) || findProductInCatalog(p)) {
-            nameCand = p;
-            for (let j = i + 1; j < parts.length; j++) {
-              if (/^\d+$/.test(parts[j])) {
-                qtyCand = parseInt(parts[j], 10);
-                break;
+        if (parts.length > 1) {
+          let nameIdx = -1;
+          for (let i = 0; i < parts.length; i++) {
+            let p = parts[i];
+            if (/^\d+$/.test(p) || p.length <= 2) continue;
+            if (/gt racer/i.test(p) || findProductInCatalog(p) || (p.length > 5 && !['сирець', 'бровари', 'петрівці'].includes(p.toLowerCase()))) {
+              nameCand = p;
+              nameIdx = i;
+              break;
+            }
+          }
+
+          if (nameIdx !== -1) {
+            let afterNumbers = [];
+            for (let j = nameIdx + 1; j < parts.length; j++) {
+              let m = parts[j].match(/^(\d+(?:\.\d+)?)(?:\s*(?:шт|од|pcs|p|x)?)?$/i);
+              if (m) afterNumbers.push(parseFloat(m[1]));
+            }
+
+            let numbers = afterNumbers.length > 0 ? afterNumbers : [];
+            if (numbers.length === 0) {
+              for (let j = 0; j < nameIdx; j++) {
+                let m = parts[j].match(/^(\d+(?:\.\d+)?)(?:\s*(?:шт|од|pcs|p|x)?)?$/i);
+                if (m) numbers.push(parseFloat(m[1]));
               }
             }
-            break;
+
+            if (numbers.length === 1) {
+              qtyCand = Math.max(1, Math.round(numbers[0]));
+            } else if (numbers.length > 1) {
+              let smallNums = numbers.filter(n => n <= 500 && Number.isInteger(n));
+              let largeNums = numbers.filter(n => n > 500);
+              if (smallNums.length > 0) {
+                qtyCand = smallNums[0];
+              } else {
+                qtyCand = Math.max(1, Math.round(numbers[0]));
+              }
+              if (largeNums.length > 0) {
+                priceCand = largeNums[0];
+              }
+            }
           }
         }
 
         if (!nameCand) {
-          for (let p of parts) {
-            if (p.length > 5 && !/^\d+$/.test(p) && !['сирець', 'бровари', 'петрівці'].includes(p.toLowerCase())) {
-              nameCand = p;
-              break;
-            }
-          }
-          for (let i = parts.length - 1; i >= 0; i--) {
-            if (/^\d+$/.test(parts[i])) {
-              qtyCand = parseInt(parts[i], 10);
-              break;
+          nameCand = parts[0] || line;
+        }
+
+        // Check for trailing quantity inside nameCand (e.g. "GT Racer B-7787 Fabric Dark Gray 1" or "GT Racer B-4011B Black  2")
+        let exactCatalogMatch = catalog.find(p => p.name.toLowerCase() === nameCand.toLowerCase());
+        if (!exactCatalogMatch) {
+          let trailingMatch = nameCand.match(/^(.*?)(?:[\s\t\-,*x:;—]+)(\d{1,4})(?:\s*(?:шт|од|pcs|p|x|\.)?)?$/i);
+          if (trailingMatch) {
+            let candName = trailingMatch[1].trim();
+            let candQty = parseInt(trailingMatch[2], 10);
+            if (candName.length >= 3 && !/^\d+$/.test(candName)) {
+              nameCand = candName;
+              qtyCand = candQty;
             }
           }
         }
@@ -1602,7 +1646,7 @@ GT Racer X-5993 Black	2
           let matched = findProductInCatalog(nameCand);
           let barcode = matched ? matched.barcode : '';
           let displayName = matched ? matched.name : nameCand;
-          let priceRt = matched && matched.price_rt ? parseFloat(matched.price_rt) : 0;
+          let priceRt = priceCand || (matched && matched.price_rt ? parseFloat(matched.price_rt) : 0);
           let priceOld = priceRt > 0 ? Math.round(priceRt * 1.15) : 0;
 
           let mat = matched ? matched.material : 'Зносостійка тканина';
@@ -1829,6 +1873,18 @@ GT Racer X-5993 Black	2
               }
 
               if (name && !name.toLowerCase().includes('название') && !name.toLowerCase().includes('товар')) {
+                let exactCatalogMatch = catalog.find(p => p.name.toLowerCase() === name.toLowerCase());
+                if (!exactCatalogMatch) {
+                  let trailingMatch = name.match(/^(.*?)(?:[\s\t\-,*x:;—]+)(\d{1,4})(?:\s*(?:шт|од|pcs|p|x|\.)?)?$/i);
+                  if (trailingMatch) {
+                    let candName = trailingMatch[1].trim();
+                    let candQty = parseInt(trailingMatch[2], 10);
+                    if (candName.length >= 3 && !/^\d+$/.test(candName)) {
+                      name = candName;
+                      qty = candQty;
+                    }
+                  }
+                }
                 let matched = findProductInCatalog(name);
                 let barcode = matched ? matched.barcode : '';
                 let displayName = matched ? matched.name : name;
