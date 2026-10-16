@@ -39,6 +39,11 @@
     }
 
     /* Print Styles: Exact Thermal 47x24mm vs Store Price Tags A4 */
+    @page {
+      size: 47mm 24mm;
+      margin: 0;
+    }
+
     @media print {
       body.mode-labels {
         width: 47mm !important;
@@ -56,10 +61,6 @@
       body.mode-labels #printContainerTags {
         display: none !important;
       }
-      body.mode-labels @page {
-        size: 47mm 24mm;
-        margin: 0;
-      }
 
       .thermal-label {
         width: 47mm !important;
@@ -75,10 +76,20 @@
         align-items: center !important;
         justify-content: flex-start !important;
         box-sizing: border-box !important;
-        padding: 1.2mm 1.5mm 0.8mm 1.5mm !important;
+        padding: 1.0mm 1.2mm 0.8mm 1.2mm !important;
         margin: 0 !important;
         background: #fff !important;
         overflow: hidden !important;
+      }
+
+      .thermal-label-inner {
+        width: 100% !important;
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        position: relative !important;
       }
 
       body.mode-tags {
@@ -219,27 +230,40 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding: 1.2mm 1.5mm 0.8mm 1.5mm;
+      padding: 1.0mm 1.2mm 0.8mm 1.2mm;
       box-sizing: border-box;
       overflow: hidden;
       transform-origin: center center;
+    }
+
+    .thermal-label-inner {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      position: relative;
     }
 
     .label-title {
       font-family: Arial, Helvetica, sans-serif;
       font-size: 8.04pt;
       line-height: 1.15;
-      font-weight: 500;
+      font-weight: 600;
       color: #000;
       text-align: center;
       width: 100%;
+      max-width: 43mm;
       word-break: break-word;
+      white-space: normal;
     }
 
     .barcode-svg {
-      width: 38.5mm;
+      width: 35mm;
+      max-width: 100%;
       height: 11.2mm;
-      margin-top: 0.8mm;
+      margin-top: 0.6mm;
       display: block;
     }
 
@@ -543,9 +567,44 @@ GT Racer X-5993 Black	2
                   <input type="number" id="cfgFontSize" value="8" step="0.5" onchange="renderAllPreviews()" class="w-full p-2 border rounded font-semibold text-center">
                 </div>
                 <div>
-                  <label class="text-gray-600 block mb-1">Висота штрихкоду (мм):</label>
+                  <label class="text-gray-600 block mb-1">Висота ШК (мм):</label>
                   <input type="number" id="cfgBarcodeHeight" value="11" step="0.5" onchange="renderAllPreviews()" class="w-full p-2 border rounded font-semibold text-center">
                 </div>
+                <div class="col-span-2">
+                  <div class="flex justify-between items-center mb-1">
+                    <label class="text-gray-600">Ширина ШК (мм):</label>
+                    <span class="text-[10px] text-gray-400">стандарт 35 мм</span>
+                  </div>
+                  <input type="number" id="cfgBarcodeWidth" value="35" step="0.5" min="25" max="44" onchange="onBarcodeWidthChange()" class="w-full p-2 border rounded font-semibold text-center">
+                </div>
+              </div>
+
+              <!-- Calibration Offset Box -->
+              <div class="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs">
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-amber-900 font-bold flex items-center gap-1">
+                    <span>↔️ Зміщення X (калібрування принтера):</span>
+                  </label>
+                  <span class="text-xs font-black text-amber-800 bg-white px-2 py-0.5 rounded border border-amber-300" id="cfgOffsetXVal">0 мм</span>
+                </div>
+                
+                <div class="grid grid-cols-5 gap-1 mb-2">
+                  <button type="button" onclick="setOffsetXPreset(-3)" class="py-1 px-1 bg-white hover:bg-amber-100 border border-amber-300 rounded font-bold text-amber-900 text-[11px] text-center" title="Зсунути вліво на 3 мм">-3 мм</button>
+                  <button type="button" onclick="setOffsetXPreset(-2.5)" class="py-1 px-1 bg-amber-200 hover:bg-amber-300 border border-amber-400 rounded font-black text-amber-950 text-[11px] text-center shadow-sm" title="Рекомендовано для усунення зсуву вправо">-2.5 мм ⭐</button>
+                  <button type="button" onclick="setOffsetXPreset(-2)" class="py-1 px-1 bg-white hover:bg-amber-100 border border-amber-300 rounded font-bold text-amber-900 text-[11px] text-center" title="Зсунути вліво на 2 мм">-2 мм</button>
+                  <button type="button" onclick="setOffsetXPreset(-1)" class="py-1 px-1 bg-white hover:bg-amber-100 border border-amber-300 rounded font-bold text-amber-900 text-[11px] text-center" title="Зсунути вліво на 1 мм">-1 мм</button>
+                  <button type="button" onclick="setOffsetXPreset(0)" class="py-1 px-1 bg-white hover:bg-gray-100 border border-gray-300 rounded font-medium text-gray-700 text-[11px] text-center" title="Скинути на 0">0 мм</button>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="adjustOffsetX(-0.5)" class="py-1 px-2.5 bg-white hover:bg-amber-100 border border-amber-300 rounded font-bold text-amber-900 text-xs">◀ -0.5</button>
+                  <input type="number" id="cfgOffsetX" value="0" step="0.5" min="-10" max="10" oninput="onOffsetXChange()" class="flex-1 p-1.5 border border-amber-300 rounded font-bold text-center text-xs bg-white text-gray-900">
+                  <button type="button" onclick="adjustOffsetX(0.5)" class="py-1 px-2.5 bg-white hover:bg-amber-100 border border-amber-300 rounded font-bold text-amber-900 text-xs">+0.5 ▶</button>
+                </div>
+
+                <p class="text-[10px] text-amber-800 mt-2 leading-tight">
+                  📌 <b>Обрізається правий край?</b> Механічні напрямні принтера або драйвер подають рулон зі зміщенням праворуч. Оберіть <b>-2.5 мм</b> або <b>-3 мм</b>, щоб відцентрувати наліпку. Налаштування зберігається автоматично.
+                </p>
               </div>
             </div>
 
@@ -606,6 +665,20 @@ GT Racer X-5993 Black	2
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 <span>Завантажити PDF</span>
               </button>
+            </div>
+
+            <!-- Print Hint for Thermal Printers -->
+            <div id="thermalPrintHint" class="mt-3 text-[11px] text-gray-600 bg-gray-50 border border-gray-200 rounded-lg p-3 flex items-start gap-2">
+              <span class="text-base leading-none">💡</span>
+              <div class="leading-relaxed">
+                <b>Як правильно налаштувати друк на термопринтері:</b>
+                <div class="text-[11px] text-gray-500 mt-0.5">
+                  1. У вікні друку виберіть ваш термопринтер (напр. Xprinter, Zebra тощо).<br>
+                  2. Встановіть розмір паперу: <b>47×24 мм</b> (або Користувацький 47x24мм).<br>
+                  3. Поля (Margins): <b>«Немає» (None)</b>, Масштаб (Scale): <b>100%</b>.<br>
+                  4. Якщо край обрізається через механічний зсув рулону — натисніть <b>«-2.5 мм ⭐»</b> у блоці калібрування ліворуч.
+                </div>
+              </div>
             </div>
           </div>
 
@@ -847,7 +920,66 @@ GT Racer X-5993 Black	2
     // Cache QR code data URLs
     const qrCache = {};
 
+    function updateDynamicPrintStyle() {
+      let styleEl = document.getElementById('dynamicPrintPageStyle');
+      if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'dynamicPrintPageStyle';
+        document.head.appendChild(styleEl);
+      }
+      if (currentMode === 'labels') {
+        styleEl.textContent = `@page { size: 47mm 24mm; margin: 0; }`;
+      } else {
+        styleEl.textContent = `@page { size: A4 portrait; margin: 5mm; }`;
+      }
+    }
+
+    function onOffsetXChange() {
+      const val = parseFloat(document.getElementById('cfgOffsetX').value) || 0;
+      const valEl = document.getElementById('cfgOffsetXVal');
+      if (valEl) valEl.textContent = `${val > 0 ? '+' : ''}${val} мм`;
+      localStorage.setItem('gt_labels_offset_x', val);
+      renderAllPreviews();
+    }
+
+    function setOffsetXPreset(val) {
+      const input = document.getElementById('cfgOffsetX');
+      if (input) input.value = val;
+      onOffsetXChange();
+    }
+
+    function adjustOffsetX(delta) {
+      let val = (parseFloat(document.getElementById('cfgOffsetX').value) || 0) + delta;
+      val = Math.round(val * 10) / 10;
+      document.getElementById('cfgOffsetX').value = val;
+      onOffsetXChange();
+    }
+
+    function onBarcodeWidthChange() {
+      const val = parseFloat(document.getElementById('cfgBarcodeWidth').value) || 35;
+      localStorage.setItem('gt_labels_bc_width', val);
+      renderAllPreviews();
+    }
+
+    function loadCalibrationSettings() {
+      const savedOffsetX = localStorage.getItem('gt_labels_offset_x');
+      if (savedOffsetX !== null) {
+        const input = document.getElementById('cfgOffsetX');
+        if (input) input.value = savedOffsetX;
+        const valEl = document.getElementById('cfgOffsetXVal');
+        if (valEl) valEl.textContent = `${parseFloat(savedOffsetX) > 0 ? '+' : ''}${savedOffsetX} мм`;
+      }
+      const savedBcWidth = localStorage.getItem('gt_labels_bc_width');
+      if (savedBcWidth !== null) {
+        const input = document.getElementById('cfgBarcodeWidth');
+        if (input) input.value = savedBcWidth;
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
+      loadCalibrationSettings();
+      updateDynamicPrintStyle();
+
       if (window.PRELOADED_PRODUCTS && window.PRELOADED_PRODUCTS.length > 0) {
         catalog = window.PRELOADED_PRODUCTS;
         loadCustomProductsFromStorage();
@@ -881,6 +1013,9 @@ GT Racer X-5993 Black	2
       const btnPrintMain = document.getElementById('btnPrintMain');
       const btnDownloadPdf = document.getElementById('btnDownloadPdf');
       const previewTitle = document.getElementById('previewSectionTitle');
+      const thermalHint = document.getElementById('thermalPrintHint');
+
+      updateDynamicPrintStyle();
 
       if (mode === 'labels') {
         btnLabels.className = 'py-1.5 px-3.5 rounded-lg bg-red-600 text-white shadow flex items-center gap-1.5 transition';
@@ -891,6 +1026,7 @@ GT Racer X-5993 Black	2
         btnPrintMain.querySelector('span').textContent = 'Друкувати на термопринтері (47×24 мм)';
         btnDownloadPdf.querySelector('span').textContent = 'Завантажити PDF (47×24 мм)';
         previewTitle.textContent = 'Попередній перегляд етикетки (47×24 мм)';
+        if (thermalHint) thermalHint.classList.remove('hidden');
       } else {
         btnTags.className = 'py-1.5 px-3.5 rounded-lg bg-red-600 text-white shadow flex items-center gap-1.5 transition';
         btnLabels.className = 'py-1.5 px-3.5 rounded-lg text-gray-400 hover:text-white flex items-center gap-1.5 transition';
@@ -900,6 +1036,7 @@ GT Racer X-5993 Black	2
         btnPrintMain.querySelector('span').textContent = 'Друкувати Цінники на А4';
         btnDownloadPdf.querySelector('span').textContent = 'Завантажити Цінники PDF';
         previewTitle.textContent = 'Попередній перегляд цінника (Оригінал 1:1)';
+        if (thermalHint) thermalHint.classList.add('hidden');
       }
 
       renderAllPreviews();
@@ -2025,23 +2162,37 @@ GT Racer X-5993 Black	2
       XLSX.writeFile(wb, 'GT_Racer_' + new Date().toISOString().slice(0, 10) + '.xlsx');
     }
 
-    // Helper: Split title for thermal label
+    // Helper: Split title for thermal label (balances 2 lines at word boundaries)
     function splitTitleForLabel(title) {
       title = (title || '').trim();
-      if (title.length <= 24) return [title];
-      if (title.includes('(')) {
-        let idx = title.indexOf('(');
-        return [title.substring(0, idx).trim(), title.substring(idx).trim()];
+      if (title.includes('\n')) {
+        return title.split('\n').map(s => s.trim()).filter(Boolean);
       }
-      let words = title.split(' ');
-      if (words.length >= 4) {
-        if (words.length >= 5 && words[3].toLowerCase() === 'fabric') {
-          return [words.slice(0, 4).join(' '), words.slice(4).join(' ')];
-        } else {
-          return [words.slice(0, 3).join(' '), words.slice(3).join(' ')];
+      if (title.length <= 22) return [title];
+
+      let words = title.split(/\s+/);
+      if (words.length <= 1) return [title];
+
+      let bestSplit = 1;
+      let minDiff = Infinity;
+      let minMaxLen = Infinity;
+
+      for (let k = 1; k < words.length; k++) {
+        let l1 = words.slice(0, k).join(' ');
+        let l2 = words.slice(k).join(' ');
+        let maxL = Math.max(l1.length, l2.length);
+        let diff = Math.abs(l1.length - l2.length);
+        if (maxL < minMaxLen || (maxL === minMaxLen && diff < minDiff)) {
+          minMaxLen = maxL;
+          minDiff = diff;
+          bestSplit = k;
         }
       }
-      return [title];
+
+      return [
+        words.slice(0, bestSplit).join(' '),
+        words.slice(bestSplit).join(' ')
+      ];
     }
 
     // Helper: Generate QR code as data URL
@@ -2077,6 +2228,8 @@ GT Racer X-5993 Black	2
       const heightMm = parseFloat(document.getElementById('cfgHeightMm').value) || 24;
       const fontSizePt = parseFloat(document.getElementById('cfgFontSize').value) || 8.04;
       const barcodeHeightMm = parseFloat(document.getElementById('cfgBarcodeHeight').value) || 11.2;
+      const barcodeWidthMm = parseFloat(document.getElementById('cfgBarcodeWidth')?.value) || 35.0;
+      const offsetX = parseFloat(document.getElementById('cfgOffsetX')?.value) || 0;
 
       const card = document.createElement('div');
       card.className = forPrint ? 'thermal-label' : 'label-preview-card';
@@ -2088,11 +2241,20 @@ GT Racer X-5993 Black	2
       card.style.width = widthMm + 'mm';
       card.style.height = heightMm + 'mm';
 
+      const inner = document.createElement('div');
+      inner.className = 'thermal-label-inner';
+      if (offsetX !== 0) {
+        inner.style.position = 'relative';
+        inner.style.left = offsetX + 'mm';
+      }
+
       const lines = splitTitleForLabel(item.name);
       const maxLen = Math.max(...lines.map(l => l.length));
       let effectiveFontSize = fontSizePt;
-      if (maxLen > 30) effectiveFontSize = Math.min(effectiveFontSize, 6.2);
-      else if (maxLen > 24) effectiveFontSize = Math.min(effectiveFontSize, 7.0);
+      if (maxLen > 32) effectiveFontSize = Math.min(effectiveFontSize, 5.8);
+      else if (maxLen > 26) effectiveFontSize = Math.min(effectiveFontSize, 6.4);
+      else if (maxLen > 21) effectiveFontSize = Math.min(effectiveFontSize, 7.2);
+      else if (maxLen > 18) effectiveFontSize = Math.min(effectiveFontSize, 7.8);
 
       const titleBox = document.createElement('div');
       titleBox.className = 'label-title';
@@ -2103,10 +2265,11 @@ GT Racer X-5993 Black	2
         lineEl.textContent = line;
         titleBox.appendChild(lineEl);
       });
-      card.appendChild(titleBox);
+      inner.appendChild(titleBox);
 
       const barcodeSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       barcodeSvg.className = 'barcode-svg';
+      barcodeSvg.style.width = barcodeWidthMm + 'mm';
       barcodeSvg.style.height = barcodeHeightMm + 'mm';
 
       let cleanDigits = (item.barcode || '').replace(/\D/g, '');
@@ -2114,7 +2277,7 @@ GT Racer X-5993 Black	2
         try {
           JsBarcode(barcodeSvg, cleanDigits, {
             format: 'EAN13',
-            width: 1.25,
+            width: 1.15,
             height: barcodeHeightMm * 2.8,
             fontSize: 10,
             textMargin: 1,
@@ -2122,20 +2285,21 @@ GT Racer X-5993 Black	2
             displayValue: true,
             font: 'Arial'
           });
-          card.appendChild(barcodeSvg);
+          inner.appendChild(barcodeSvg);
         } catch (e) {
           let errBox = document.createElement('div');
           errBox.className = 'text-[9px] text-red-500 font-mono mt-2';
           errBox.textContent = `EAN-13: ${cleanDigits}`;
-          card.appendChild(errBox);
+          inner.appendChild(errBox);
         }
       } else {
         let noCodeBox = document.createElement('div');
         noCodeBox.className = 'text-[9px] text-amber-600 font-mono mt-3 border border-dashed border-amber-300 p-1 rounded';
         noCodeBox.textContent = cleanDigits ? `Невірний EAN (${cleanDigits.length})` : 'Штрихкод відсутній';
-        card.appendChild(noCodeBox);
+        inner.appendChild(noCodeBox);
       }
 
+      card.appendChild(inner);
       return card;
     }
 
@@ -2316,6 +2480,29 @@ GT Racer X-5993 Black	2
           format: [133.2, 68.04]
         });
 
+        // Register Myriad Pro font if available for 100% Cyrillic support
+        let activeFont = 'Helvetica';
+        if (window.FONT_MYRIAD_REGULAR) {
+          try {
+            const base64Font = window.FONT_MYRIAD_REGULAR.split(',')[1];
+            doc.addFileToVFS('MyriadPro-Regular.ttf', base64Font);
+            doc.addFont('MyriadPro-Regular.ttf', 'MyriadPro', 'normal');
+            activeFont = 'MyriadPro';
+          } catch (e) {
+            console.warn('Fallback to standard Helvetica for PDF', e);
+          }
+        }
+
+        const offsetXMm = parseFloat(document.getElementById('cfgOffsetX')?.value) || 0;
+        const offsetPt = offsetXMm * (72 / 25.4);
+        const centerX = (133.2 / 2) + offsetPt;
+
+        const barcodeWidthMm = parseFloat(document.getElementById('cfgBarcodeWidth')?.value) || 35.0;
+        const barcodeHeightMm = parseFloat(document.getElementById('cfgBarcodeHeight')?.value) || 11.2;
+        const bcWidthPt = barcodeWidthMm * (72 / 25.4);
+        const bcHeightPt = barcodeHeightMm * (72 / 25.4);
+        const bcX = centerX - (bcWidthPt / 2);
+
         const expanded = [];
         items.forEach(it => {
           let q = parseInt(it.quantity, 10) || 1;
@@ -2329,18 +2516,20 @@ GT Racer X-5993 Black	2
           const lines = splitTitleForLabel(it.name);
           const maxLen = Math.max(...lines.map(l => l.length));
           let pdfFontSize = 8.04;
-          if (maxLen > 30) pdfFontSize = 6.2;
-          else if (maxLen > 24) pdfFontSize = 7.0;
+          if (maxLen > 32) pdfFontSize = 5.8;
+          else if (maxLen > 26) pdfFontSize = 6.4;
+          else if (maxLen > 21) pdfFontSize = 7.2;
+          else if (maxLen > 18) pdfFontSize = 7.8;
 
-          doc.setFont('Helvetica', 'normal');
+          doc.setFont(activeFont, 'normal');
           doc.setFontSize(pdfFontSize);
           doc.setTextColor(0, 0, 0);
 
           if (lines.length === 1) {
-            doc.text(lines[0], 133.2 / 2, 13.0, { align: 'center' });
+            doc.text(lines[0], centerX, 13.0, { align: 'center' });
           } else {
-            doc.text(lines[0], 133.2 / 2, 10.5, { align: 'center' });
-            doc.text(lines[1], 133.2 / 2, 19.5, { align: 'center' });
+            doc.text(lines[0], centerX, 10.5, { align: 'center' });
+            doc.text(lines[1], centerX, 19.5, { align: 'center' });
           }
 
           const cleanDigits = (it.barcode || '').replace(/\D/g, '');
@@ -2356,8 +2545,8 @@ GT Racer X-5993 Black	2
                 margin: 0
               });
               const imgData = canvas.toDataURL('image/png');
-              let bcY = lines.length === 1 ? 21.0 : 25.0;
-              doc.addImage(imgData, 'PNG', 12.24, bcY, 108.72, 36.0);
+              let bcY = lines.length === 1 ? 21.0 : 24.5;
+              doc.addImage(imgData, 'PNG', bcX, bcY, bcWidthPt, bcHeightPt);
             } catch (e) {}
           }
         }
