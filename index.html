@@ -422,12 +422,20 @@ GT Racer X-2729 Fabric Black	1
 GT Racer X-5993 Black	2
 або всю накладну з Excel"></textarea>
 
-                <div class="flex items-center justify-between text-xs text-gray-600">
-                  <label class="flex items-center gap-2 cursor-pointer font-medium">
-                    <input type="checkbox" id="chkAutoSum" checked class="rounded text-red-600 focus:ring-red-500">
-                    <span>Автоматично сумувати однакові позиції</span>
-                  </label>
-                  <button onclick="document.getElementById('rawInputText').value = ''" class="text-gray-400 hover:text-gray-600">Очистити</button>
+                <div class="space-y-1.5 text-xs text-gray-600">
+                  <div class="flex items-center justify-between">
+                    <label class="flex items-center gap-2 cursor-pointer font-medium text-gray-800">
+                      <input type="checkbox" id="chkAutoClearQueue" checked onchange="saveQueueSettings()" class="rounded text-red-600 focus:ring-red-500">
+                      <span>🧹 Очищати чергу друку перед кожним додаванням</span>
+                    </label>
+                    <button type="button" onclick="document.getElementById('rawInputText').value = ''" class="text-gray-400 hover:text-gray-600 text-[11px]">Очистити поле</button>
+                  </div>
+                  <div>
+                    <label class="flex items-center gap-2 cursor-pointer font-medium">
+                      <input type="checkbox" id="chkAutoSum" checked onchange="saveQueueSettings()" class="rounded text-red-600 focus:ring-red-500">
+                      <span>Автоматично сумувати однакові позиції</span>
+                    </label>
+                  </div>
                 </div>
 
                 <button onclick="processTextInput()" class="w-full py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow transition flex items-center justify-center gap-2 text-sm">
@@ -1146,8 +1154,29 @@ GT Racer X-5993 Black	2
       }
     }
 
+    function saveQueueSettings() {
+      const chkClear = document.getElementById('chkAutoClearQueue');
+      if (chkClear) localStorage.setItem('gt_auto_clear_queue', chkClear.checked);
+      const chkSum = document.getElementById('chkAutoSum');
+      if (chkSum) localStorage.setItem('gt_auto_sum_items', chkSum.checked);
+    }
+
+    function loadQueueSettings() {
+      const savedAutoClear = localStorage.getItem('gt_auto_clear_queue');
+      const chkClear = document.getElementById('chkAutoClearQueue');
+      if (chkClear) {
+        chkClear.checked = (savedAutoClear !== null) ? (savedAutoClear === 'true') : true;
+      }
+      const savedAutoSum = localStorage.getItem('gt_auto_sum_items');
+      const chkSum = document.getElementById('chkAutoSum');
+      if (chkSum && savedAutoSum !== null) {
+        chkSum.checked = (savedAutoSum === 'true');
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       loadCalibrationSettings();
+      loadQueueSettings();
       updateDynamicPrintStyle();
       updateModeLabelsText();
 
@@ -1548,6 +1577,12 @@ GT Racer X-5993 Black	2
         return;
       }
 
+      const autoClearQueue = document.getElementById('chkAutoClearQueue')?.checked ?? true;
+      if (autoClearQueue) {
+        items = [];
+        currentPreviewIndex = 0;
+      }
+
       const autoSum = document.getElementById('chkAutoSum').checked;
       const lines = text.split('\n');
       const newItemsMap = {};
@@ -1583,7 +1618,7 @@ GT Racer X-5993 Black	2
           let nameIdx = -1;
           for (let i = 0; i < parts.length; i++) {
             let p = parts[i];
-            if (/^\d+$/.test(p) || p.length <= 2) continue;
+            if (/^\d+(?:[.,]\d+)?\.?$/.test(p) || p.length <= 2) continue;
             if (/gt racer/i.test(p) || findProductInCatalog(p) || (p.length > 5 && !['сирець', 'бровари', 'петрівці'].includes(p.toLowerCase()))) {
               nameCand = p;
               nameIdx = i;
@@ -1594,27 +1629,33 @@ GT Racer X-5993 Black	2
           if (nameIdx !== -1) {
             let afterNumbers = [];
             for (let j = nameIdx + 1; j < parts.length; j++) {
-              let m = parts[j].match(/^(\d+(?:\.\d+)?)(?:\s*(?:шт|од|pcs|p|x)?)?$/i);
-              if (m) afterNumbers.push(parseFloat(m[1]));
+              let m = parts[j].match(/^(\d+(?:[.,]\d+)?\.?)(?:\s*(?:шт|од|pcs|p|x|ед)\.?)?$/i);
+              if (m) {
+                let val = parseQtyFromStr(m[1]);
+                afterNumbers.push(val);
+              }
             }
 
             let numbers = afterNumbers.length > 0 ? afterNumbers : [];
             if (numbers.length === 0) {
               for (let j = 0; j < nameIdx; j++) {
-                let m = parts[j].match(/^(\d+(?:\.\d+)?)(?:\s*(?:шт|од|pcs|p|x)?)?$/i);
-                if (m) numbers.push(parseFloat(m[1]));
+                let m = parts[j].match(/^(\d+(?:[.,]\d+)?\.?)(?:\s*(?:шт|од|pcs|p|x|ед)\.?)?$/i);
+                if (m) {
+                  let val = parseQtyFromStr(m[1]);
+                  numbers.push(val);
+                }
               }
             }
 
             if (numbers.length === 1) {
-              qtyCand = Math.max(1, Math.round(numbers[0]));
+              qtyCand = numbers[0];
             } else if (numbers.length > 1) {
               let smallNums = numbers.filter(n => n <= 500 && Number.isInteger(n));
               let largeNums = numbers.filter(n => n > 500);
               if (smallNums.length > 0) {
                 qtyCand = smallNums[0];
               } else {
-                qtyCand = Math.max(1, Math.round(numbers[0]));
+                qtyCand = numbers[0];
               }
               if (largeNums.length > 0) {
                 priceCand = largeNums[0];
@@ -1627,14 +1668,14 @@ GT Racer X-5993 Black	2
           nameCand = parts[0] || line;
         }
 
-        // Check for trailing quantity inside nameCand (e.g. "GT Racer B-7787 Fabric Dark Gray 1" or "GT Racer B-4011B Black  2")
+        // Check for trailing quantity inside nameCand (e.g. "GT Racer B-7787 Fabric Dark Gray 1,000." or "GT Racer B-4011B Black  2")
         let exactCatalogMatch = catalog.find(p => p.name.toLowerCase() === nameCand.toLowerCase());
         if (!exactCatalogMatch) {
-          let trailingMatch = nameCand.match(/^(.*?)(?:[\s\t\-,*x:;—]+)(\d{1,4})(?:\s*(?:шт|од|pcs|p|x|\.)?)?$/i);
+          let trailingMatch = nameCand.match(/^(.*?)(?:[\s\t\-*x:;—]+|,\s+)(\d+(?:[.,]\d+)?\.?)(?:\s*(?:шт|од|pcs|p|x|ед)\.?)?$/i);
           if (trailingMatch) {
             let candName = trailingMatch[1].trim();
-            let candQty = parseInt(trailingMatch[2], 10);
-            if (candName.length >= 3 && !/^\d+$/.test(candName)) {
+            let candQty = parseQtyFromStr(trailingMatch[2]);
+            if (candName.length >= 3 && !/^\d+(?:[.,]\d+)?\.?$/.test(candName)) {
               nameCand = candName;
               qtyCand = candQty;
             }
@@ -1734,6 +1775,12 @@ GT Racer X-5993 Black	2
           const sheet = workbook.Sheets[workbook.SheetNames[0]];
           const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
+          let autoClearQueue = document.getElementById('chkAutoClearQueue')?.checked ?? true;
+          if (autoClearQueue) {
+            items = [];
+            currentPreviewIndex = 0;
+          }
+
           let autoSum = document.getElementById('chkAutoSum').checked;
           let addedCount = 0;
 
@@ -1807,7 +1854,7 @@ GT Racer X-5993 Black	2
               let rawMaxLoad = colMap.max_load >= 0 ? String(row[colMap.max_load] || '').trim() : '';
               let rawWarranty = colMap.warranty >= 0 ? String(row[colMap.warranty] || '').trim() : '';
               let rawUrl = colMap.url >= 0 ? String(row[colMap.url] || '').trim() : '';
-              let rawQty = colMap.qty >= 0 ? parseInt(String(row[colMap.qty] || '').replace(/\D/g, ''), 10) || 1 : 1;
+              let rawQty = colMap.qty >= 0 ? parseQtyFromStr(row[colMap.qty]) : 1;
 
               if (!rawName && !rawBarcode) continue;
 
@@ -1862,7 +1909,7 @@ GT Racer X-5993 Black	2
                 if (/gt racer/i.test(cell) || findProductInCatalog(cell)) {
                   name = cell;
                   for (let nc = c + 1; nc < row.length; nc++) {
-                    let val = parseInt(row[nc], 10);
+                    let val = parseQtyFromStr(row[nc]);
                     if (!isNaN(val) && val > 0) {
                       qty = val;
                       break;
@@ -1875,11 +1922,11 @@ GT Racer X-5993 Black	2
               if (name && !name.toLowerCase().includes('название') && !name.toLowerCase().includes('товар')) {
                 let exactCatalogMatch = catalog.find(p => p.name.toLowerCase() === name.toLowerCase());
                 if (!exactCatalogMatch) {
-                  let trailingMatch = name.match(/^(.*?)(?:[\s\t\-,*x:;—]+)(\d{1,4})(?:\s*(?:шт|од|pcs|p|x|\.)?)?$/i);
+                  let trailingMatch = name.match(/^(.*?)(?:[\s\t\-*x:;—]+|,\s+)(\d+(?:[.,]\d+)?\.?)(?:\s*(?:шт|од|pcs|p|x|ед)\.?)?$/i);
                   if (trailingMatch) {
                     let candName = trailingMatch[1].trim();
-                    let candQty = parseInt(trailingMatch[2], 10);
-                    if (candName.length >= 3 && !/^\d+$/.test(candName)) {
+                    let candQty = parseQtyFromStr(trailingMatch[2]);
+                    if (candName.length >= 3 && !/^\d+(?:[.,]\d+)?\.?$/.test(candName)) {
                       name = candName;
                       qty = candQty;
                     }
@@ -2384,6 +2431,17 @@ GT Racer X-5993 Black	2
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Товари');
       XLSX.writeFile(wb, 'GT_Racer_' + new Date().toISOString().slice(0, 10) + '.xlsx');
+    }
+
+    // Helper: Parse quantity from string or cell (supports integer, float/double like 1,000, 1.000, 1,000., units)
+    function parseQtyFromStr(str) {
+      if (str == null) return 1;
+      let clean = String(str).trim();
+      clean = clean.replace(/\s*(?:шт|од|pcs|p|x|ед)\.?$/i, '').trim();
+      clean = clean.replace(/[.,;]+$/, '').trim();
+      clean = clean.replace(',', '.');
+      let val = parseFloat(clean);
+      return (!isNaN(val) && val > 0) ? Math.max(1, Math.round(val)) : 1;
     }
 
     // Barcode helpers: checksum & human readable text formatting
