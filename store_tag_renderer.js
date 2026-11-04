@@ -52,6 +52,57 @@ function getTagTitleFontSize(text, defaultSize = 26.0883) {
   return Math.max(11, Math.min(defaultSize, calcSize));
 }
 
+function isTagTableProduct(item) {
+  if (!item) return false;
+  if (typeof item === 'string') item = { name: item };
+  if (item.category === 'table' || item.product_type === 'table') return true;
+  if (item.category === 'chair' || item.product_type === 'chair') return false;
+  const cat = (item.category || '').toLowerCase();
+  if (cat.includes('стіл') || cat.includes('стол') || cat.includes('desk') || cat.includes('table')) return true;
+  const name = (item.name || '').toLowerCase();
+  if (name.includes('стіл') || name.includes('стол') || name.includes('desk')) return true;
+  if (/\b(?:t|ty|dt|dy)[-\s]?\d{3,4}\b/i.test(name)) return true;
+  if (/\bt-s\s*\d{3,4}\b/i.test(name)) return true;
+  return false;
+}
+
+function getTagSpecifications(item) {
+  const isTable = isTagTableProduct(item);
+
+  // Line 1: Table top vs Upholstery material
+  let label1 = item.spec1_name || (isTable ? "Матеріал стільниці" : "Матеріал оббивки");
+  let val1 = item.material;
+  if (!val1) {
+    val1 = isTable ? "МДФ" : "Зносостійка тканина";
+  } else if (isTable && val1 === "Екошкіра PU") {
+    val1 = "МДФ";
+  }
+
+  // Line 2: Frame material vs Armrests
+  let label2 = item.spec2_name || (isTable ? "Матеріал каркасу" : "Підлокітники");
+  let val2 = item.armrests;
+  if (!val2) {
+    val2 = isTable ? "Метал" : "1D";
+  } else if (isTable && (val2 === "1D" || val2 === "2D")) {
+    val2 = "Метал";
+  }
+
+  // Line 3: Max load
+  let label3 = item.spec3_name || "Максимальне навантаження";
+  let val3 = item.max_load || (isTable ? "100 кг" : "120 кг");
+
+  // Line 4: Warranty
+  let label4 = item.spec4_name || "Гарантія";
+  let val4 = item.warranty || "12 місяців";
+
+  return [
+    { label: label1, value: val1 },
+    { label: label2, value: val2 },
+    { label: label3, value: val3 },
+    { label: label4, value: val4 }
+  ];
+}
+
 function generateStoreTagSvgString(item, qrDataUrl) {
   const { line1, line2 } = splitTagTitle(item.name);
   const fs1 = getTagTitleFontSize(line1, 26.0883);
@@ -66,10 +117,12 @@ function generateStoreTagSvgString(item, qrDataUrl) {
   const pOldStr = hasOldPrice ? formatTagPrice(pOldVal) : "";
   const pNewStr = pNewVal > 0 ? formatTagPrice(pNewVal) : "Ціну уточнюйте";
 
-  const mat = item.material || "Зносостійка тканина";
-  const arm = item.armrests || "1D";
-  const load = item.max_load || "120 кг";
-  const war = item.warranty || "12 місяців";
+  const specs = getTagSpecifications(item);
+  const specTspans = specs.map((sp, idx) => {
+    const yOffset = idx * 14.4;
+    const text = sp.label ? `${sp.label}: ${sp.value}` : sp.value;
+    return `<tspan x="0" y="${yOffset}" class="st0 st1">${escapeXml(text)}</tspan>`;
+  }).join('\n    ');
 
   // Dynamic typography and positioning to guarantee "грн" NEVER overflows card border
   // Tag width is 309, right border rect is at 307. Right margin x = 288 gives clean 19px padding.
@@ -168,10 +221,7 @@ function generateStoreTagSvgString(item, qrDataUrl) {
 
   <!-- Specifications (Characteristics) -->
   <text transform="matrix(1 0 0 1 15.9055 206.9183)">
-    <tspan x="0" y="0" class="st0 st1">Матеріал оббивки: ${escapeXml(mat)}</tspan>
-    <tspan x="0" y="14.4" class="st0 st1">Підлокітники: ${escapeXml(arm)}</tspan>
-    <tspan x="0" y="28.8" class="st0 st1">Максимальне навантаження: ${escapeXml(load)}</tspan>
-    <tspan x="0" y="43.2" class="st0 st1">Гарантія: ${escapeXml(war)}</tspan>
+    ${specTspans}
   </text>
 
   <!-- Old Price (Strikethrough) -->
